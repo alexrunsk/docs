@@ -1,457 +1,784 @@
-components:
-  schemas:
-    ActionResult:
-      properties:
-        finished_at:
-          $ref: '#/components/schemas/UTCTime'
-        result:
-          $ref: '#/components/schemas/ActionStatus'
-        started_at:
-          $ref: '#/components/schemas/UTCTime'
-        type:
-          $ref: '#/components/schemas/BookingRecordAction'
-      required:
-        - type
-        - started_at
-      type: object
-    ActionRule:
-      properties:
-        after_departure:
-          $ref: '#/components/schemas/SituationRule'
-        before_departure:
-          $ref: '#/components/schemas/SituationRule'
-        has_penalty:
-          type: boolean
-        is_permitted:
-          type: boolean
-        no_show:
-          $ref: '#/components/schemas/SituationRule'
-      required:
-        - is_permitted
-      type: object
-    ActionStatus:
-      enum:
-        - success
-        - recoverable_error
-        - non_recoverable_error
-      type: string
-    AdultPassenger_PassengerInfo:
-      properties:
-        adult:
-          $ref: '#/components/schemas/PassengerInfo'
-        infant:
-          $ref: '#/components/schemas/PassengerInfo'
-      required:
-        - adult
-      type: object
-    AdultPassenger_Person:
-      properties:
-        adult:
-          $ref: '#/components/schemas/Person'
-        infant:
-          $ref: '#/components/schemas/Person'
-      required:
-        - adult
-      type: object
-    AdvancedPricingDetails:
-      properties:
-        airline_allowed_cc_types:
-          items:
-            $ref: '#/components/schemas/CreditCardType'
-          type: array
-        fare_type:
-          $ref: '#/components/schemas/FareType'
-        max_agent_markup:
-          multipleOf: 0.01
-          type: number
-        source:
-          $ref: '#/components/schemas/SourceV2'
-        split_payment_allowed:
-          type: boolean
-      required:
-        - fare_type
-        - split_payment_allowed
-        - airline_allowed_cc_types
-        - source
-      type: object
-    Author:
-      properties:
-        email:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-      required:
-        - first_name
-        - last_name
-        - email
-      type: object
-    BRMetadata:
-      properties:
-        can_book_seats_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/BookSeatsContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_cancel_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/CancelContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_exchange_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/ChangeContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_modify_pax:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/ModifyPaxContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_refund_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/RefundContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_ticket_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/TicketContext'
-              - type: string
-            description: Extensible enum
-          type: array
-        can_void_context:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/VoidContext'
-              - type: string
-            description: Extensible enum
-          type: array
-      required:
-        - can_refund_context
-        - can_exchange_context
-        - can_void_context
-        - can_cancel_context
-        - can_ticket_context
-        - can_book_seats_context
-        - can_modify_pax
-      type: object
-    Baggage:
-      properties:
-        amount:
-          maximum: 9223372036854776000
-          minimum: -9223372036854776000
-          type: integer
-        unit:
-          $ref: '#/components/schemas/BaggageUnit'
-      required:
-        - amount
-        - unit
-      type: object
-    BaggageUnit:
-      enum:
-        - NumberOfPieces
-        - Kilograms
-        - Pounds
-      type: string
-    BonusCard:
-      properties:
-        card_number:
-          type: string
-        carrier_iata:
-          type: string
-      required:
-        - card_number
-        - carrier_iata
-      type: object
-    BookSeatsContext:
-      enum:
-        - source_not_supported
-        - not_supported_by_airline
-        - no_issued_tickets
-        - booking_record_has_problems
-      type: string
-    BookingError:
-      oneOf:
-        - $ref: '#/components/schemas/BookingFailed'
-        - $ref: '#/components/schemas/PriceChanged'
-    BookingFailed:
-      properties:
-        message:
-          type: string
-        reason:
-          enum:
-            - failed
-          type: string
-      required:
-        - message
-        - reason
-      type: object
-    BookingRecordAction:
-      enum:
-        - book
-        - cancel
-        - issue
-        - book_seats
-        - exchange
-        - void
-        - refund
-      type: string
-    BookingRecordProblem:
-      enum:
-        - airline_interruption
-        - disrupted
-        - manual_update
-        - involuntary_cancellation
-        - passengers_mismatch
-        - last_action_support_required
-      type: string
-    BookingRecordV2:
-      properties:
-        airline_record_locator:
-          type: string
-        can_book_seats:
-          type: boolean
-        can_cancel:
-          type: boolean
-        can_exchange:
-          type: boolean
-        can_modify_pax:
-          type: boolean
-        can_refund:
-          type: boolean
-        can_ticket:
-          type: boolean
-        can_void:
-          type: boolean
-        change_scope:
-          $ref: '#/components/schemas/ChangeScope'
-        created_at:
-          $ref: '#/components/schemas/UTCTime'
-        fare_price_guarantee_time_limit:
-          $ref: '#/components/schemas/UTCTime'
-        fare_rule_texts:
-          additionalProperties:
+openapi: 3.0.0
+info:
+  version: Unstable
+  title: Hotels API for external clients
+  description: This API can be used by external clients.
+servers:
+  - url: 'https://master.hotels.stage.thebestagent.pro'
+    description: master
+paths:
+  /public/external/v1/search/hotels:
+    post:
+      tags:
+        - Hotels Paths
+      summary: Hotels Search
+      description: 'Search for available properties based on location, dates, and required rooms. This action starts a session on the backend to track the booking process.'
+      requestBody:
+        description: |-
+          * **check_in**: The start date for the booking period. This date can be set up to 365 days in the future, allowing users to plan for trips up to a year ahead.
+          * **check_out**: The end date for the booking period. This date must be at least 1 day after the **check_in** date and no more than 90 days after, ensuring that the booking duration is reasonable and within a 3-month limit.
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/APISearchRequest_APISearchTypeExt'
+            examples:
+              Search by radius in London:
+                value:
+                  check_in: '2016-07-22'
+                  check_out: '2016-07-27'
+                  rooms:
+                    - adults_count: 1
+                      kids_ages:
+                        - 1
+                  search_by:
+                    center:
+                      latitude: 51.5074
+                      longitude: -0.1278
+                    name: London
+                    radius: 10000
+              Search several rooms in London:
+                value:
+                  check_in: '2016-07-22'
+                  check_out: '2016-07-27'
+                  rooms:
+                    - adults_count: 1
+                      kids_ages:
+                        - 1
+                    - adults_count: 1
+                      kids_ages:
+                        - 17
+                  search_by:
+                    center:
+                      latitude: 51.5074
+                      longitude: -0.1278
+                    name: London
+                    radius: 10000
+              Search rooms by rectangle in New York:
+                value:
+                  check_in: '2016-07-22'
+                  check_out: '2016-07-27'
+                  rooms:
+                    - adults_count: 1
+                      kids_ages:
+                        - 1
+                    - adults_count: 1
+                      kids_ages:
+                        - 17
+                  search_by:
+                    ne_corner:
+                      latitude: 40.7263
+                      longitude: -73.9885
+                    sw_corner:
+                      latitude: 40.6993
+                      longitude: -74.0235
+                    place_name: New York City
+      responses:
+        '200':
+          description: |-
+            The Search API returns a list of properties that match the specified search parameters, each accompanied by a preliminary room offer. This initial offer provides essential details such as pricing, cancellation policies, and room specifics, allowing clients to make informed choices before proceeding with a booking.
+
+            In addition, the API generates and returns a **session_id** at the start of the search. This **session_id** is used to track and manage the session seamlessly from the initial search phase through to the booking completion, ensuring all related actions are correctly associated with the user’s session.
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/APISearchResponse'
+        '400':
+          description: Invalid `body`
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  /public/external/v1/book/create:
+    post:
+      tags:
+        - Hotels Paths
+      summary: Prepare for Booking
+      description: Checking data for Booking and create order in Hotels backend. It doesn't make real booking
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/APIBookRequest_APIPaymentCredsP'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/UUID'
+        '400':
+          description: Invalid `body`
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  '/public/external/v1/order/{order_id}/book':
+    post:
+      tags:
+        - Hotels Paths
+      summary: Process Hotels Booking
+      description: Process Booking using data for order. Run it after book/create
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
             type: string
-          type: object
-        fare_rules:
-          $ref: '#/components/schemas/FareRules'
-        flights:
-          items:
-            $ref: '#/components/schemas/FlightWithPriceClass_PriceClass_FlightSegmentV2'
+            format: uuid
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/APIPaymentCredsP'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8: {}
+        '400':
+          description: Invalid `body`
+        '404':
+          description: '`order_id` not found'
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  '/public/external/v1/order/{order_id}/cancel':
+    patch:
+      tags:
+        - Hotels Paths
+      parameters:
+        - name: confirmation
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/APIOrderDetails'
+        '400':
+          description: Invalid `confirmation`
+        '404':
+          description: '`order_id` not found'
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  '/public/external/v1/order/{order_id}/details':
+    get:
+      tags:
+        - Hotels Paths
+      summary: Order details
+      description: Get details of order.
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/APIOrderDetailsExt'
+        '404':
+          description: '`order_id` not found'
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  '/public/external/v1/order/{order_id}/sync_status':
+    post:
+      tags:
+        - Hotels Paths
+      parameters:
+        - name: confirmation
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/APIOrderDetailsExt'
+        '400':
+          description: Invalid `confirmation`
+        '404':
+          description: '`order_id` not found'
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  /public/external/v1/search/get_rooms:
+    post:
+      tags:
+        - Hotels Paths
+      summary: Offers for Hotel
+      description: Get offers for booking for one selected Hotel.
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/APIGetRoomsRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/APIGetRoomsResponse'
+        '400':
+          description: Invalid `body`
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+  /public/external/v1/search/hotel_properties:
+    post:
+      tags:
+        - Hotels Paths
+      summary: Hotels properties
+      description: 'Get hotel properties (images, facilities, descriptions, policies etc) for the list of hotels. Usually we search for available hotels and then get their property while scrolling etc.'
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json;charset=utf-8:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/APIHotelProperties'
+        '400':
+          description: Invalid `body`
+      security:
+        - air-public-oauth: []
+      servers:
+        - url: 'https://master.hotels.stage.thebestagent.pro'
+          description: master
+tags:
+  - name: Hotels Paths
+components:
+  securitySchemes:
+    air-public-oauth:
+      type: http
+      description: Bearer token
+      scheme: bearer
+  schemas:
+    APISearchRequest_APISearchTypeExt:
+      type: object
+      properties:
+        check_in:
+          $ref: '#/components/schemas/Day'
+        check_out:
+          $ref: '#/components/schemas/Day'
+        rooms:
+          type: array
           minItems: 1
-          type: array
-        follow_up_actions:
+          maxItems: 4
           items:
-            $ref: '#/components/schemas/FollowUpAction'
+            $ref: '#/components/schemas/APIRoomRequest'
+        search_by:
+          $ref: '#/components/schemas/APISearchTypeExt'
+      required:
+        - check_in
+        - check_out
+        - rooms
+        - search_by
+    Day:
+      type: string
+      description: 'Date, formatted as YYYY-MM-DD (e.g., “2016-07-22”)'
+      format: date
+      example: '2016-07-22'
+    APIRoomRequest:
+      type: object
+      properties:
+        adults_count:
+          type: integer
+          minimum: 1
+          maximum: 10
+        kids_ages:
           type: array
-          uniqueItems: true
+          maxItems: 10
+          items:
+            type: integer
+            minimum: 1
+            maximum: 17
+      required:
+        - adults_count
+        - kids_ages
+    APISearchTypeExt:
+      oneOf:
+        - $ref: '#/components/schemas/APIRadiusSearch'
+        - $ref: '#/components/schemas/APIRectangleSearch'
+    APIRadiusSearch:
+      type: object
+      title: Radius Search
+      description: Search by radius
+      properties:
+        center:
+          $ref: '#/components/schemas/Location'
+        name:
+          type: string
+        radius:
+          type: integer
+          description: meters
+          minimum: 0
+          maximum: 50000
+      required:
+        - center
+        - name
+        - radius
+    Location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          example: 51.506958
+        longitude:
+          type: number
+          example: -0.124813
+      required:
+        - latitude
+        - longitude
+    APIRectangleSearch:
+      type: object
+      title: Rectangle Search
+      description: Search by rectangle
+      properties:
+        ne_corner:
+          $ref: '#/components/schemas/Location'
+        sw_corner:
+          $ref: '#/components/schemas/Location'
+        place_name:
+          type: string
+      required:
+        - ne_corner
+        - sw_corner
+        - place_name
+    APISearchResponse:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIFilterCategory'
+        hotels:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIHotel'
+        session_id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - filters
+        - hotels
+        - session_id
+    APIFilterCategory:
+      type: object
+      properties:
+        facility_type:
+          $ref: '#/components/schemas/APIFacilityType'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIFilterGroup'
+        name:
+          type: string
+        priority:
+          type: integer
+      required:
+        - groups
+        - name
+        - priority
+    APIFacilityType:
+      type: string
+      enum:
+        - room
+        - hotel
+    APIFilterGroup:
+      type: object
+      properties:
+        hotel_ids:
+          type: array
+          items:
+            type: string
         id:
           $ref: '#/components/schemas/UUID'
-        involuntary_change_scope:
-          $ref: '#/components/schemas/ChangeScope'
-        last_action:
-          $ref: '#/components/schemas/ActionResult'
-        metadata:
-          $ref: '#/components/schemas/BRMetadata'
-        passengers:
-          items:
-            $ref: '#/components/schemas/Passenger_PassengerInfo'
-          minItems: 1
-          type: array
-        problems:
-          items:
-            anyOf:
-              - $ref: '#/components/schemas/BookingRecordProblem'
-              - type: string
-            description: Extensible enum
-          type: array
-          uniqueItems: true
-        record_locator:
+        name:
           type: string
-        source_reference:
-          type: string
-        synchronized_at:
-          $ref: '#/components/schemas/UTCTime'
-        ticketing_time_limit:
-          $ref: '#/components/schemas/UTCTime'
-        voiding_time_limit:
-          $ref: '#/components/schemas/UTCTime'
+        priority:
+          type: integer
       required:
+        - hotel_ids
         - id
-        - source_reference
-        - record_locator
-        - created_at
-        - can_ticket
-        - can_cancel
-        - can_void
-        - can_refund
-        - can_exchange
-        - can_book_seats
-        - can_modify_pax
-        - ticketing_time_limit
-        - fare_rule_texts
-        - flights
-        - passengers
-        - change_scope
-        - involuntary_change_scope
-        - metadata
-        - problems
-        - synchronized_at
-        - follow_up_actions
+        - name
+        - priority
+    UUID:
+      type: string
+      format: uuid
+      example: 00000000-0000-0000-0000-000000000000
+    APIHotel:
       type: object
-    BookingRequest:
+      description: 'A collection of properties that match the search parameters. Each includes detailed information about the property, as well as preliminary pricing details for available room offers.'
+      properties:
+        address:
+          type: string
+          example: '"18/21 Northumberland Avenue"'
+        chain_name:
+          type: string
+          example: '"Ascott"'
+        city_name:
+          type: string
+          example: '"London"'
+        country_code:
+          type: string
+          example: '"GB"'
+        display_name:
+          type: string
+          example: '"Citadines South Kensington London"'
+        has_free_cancellation:
+          type: boolean
+        hotel_id:
+          type: string
+          description: readable ID of the hotel
+          example: '"39670730"'
+        location:
+          $ref: '#/components/schemas/Location'
+        property_type:
+          type: string
+          example: '"Aparthotel"'
+        room_offer:
+          $ref: '#/components/schemas/APISearchRoomOffer'
+        star_rating:
+          type: integer
+          description: 0 - means that hotel has no stars
+          minimum: 0
+          maximum: 5
+          example: 4
+        state:
+          type: string
+          example: '"England"'
+      required:
+        - country_code
+        - display_name
+        - has_free_cancellation
+        - hotel_id
+        - room_offer
+    APISearchRoomOffer:
+      type: object
+      description: 'Information about the room offer for the requested set of rooms, providing price and additional booking details'
+      properties:
+        dtt_pricing:
+          $ref: '#/components/schemas/APIDttPricing'
+        meal_plan:
+          $ref: '#/components/schemas/MealPlan'
+        simple_price:
+          type: number
+          multipleOf: 0.01
+        supplier_id:
+          type: string
+        supplier_name:
+          type: string
+      required:
+        - dtt_pricing
+        - supplier_id
+        - supplier_name
+    APIDttPricing:
+      type: object
+      properties:
+        additional_fees:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITaxesAndFees'
+        dtt_fee:
+          type: number
+          multipleOf: 0.01
+        rate:
+          type: number
+          multipleOf: 0.01
+        special_taxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITaxesAndFees'
+        tax:
+          type: number
+          multipleOf: 0.01
+        total_special_tax:
+          type: number
+          multipleOf: 0.01
+      required:
+        - additional_fees
+        - dtt_fee
+        - rate
+        - special_taxes
+        - tax
+        - total_special_tax
+    APITaxesAndFees:
+      type: object
+      properties:
+        currency:
+          type: string
+        fee_title:
+          type: string
+        frequency_type:
+          type: string
+        is_included_in_price:
+          type: boolean
+        is_value_percentage:
+          type: boolean
+        unit_type:
+          type: string
+        value:
+          type: string
+    MealPlan:
+      type: string
+      enum:
+        - all_inclusive
+        - breakfast_included
+        - full_board
+        - half_board
+        - dinner_included
+        - room_only
+        - self_catering
+    APIBookRequest_APIPaymentCredsP:
+      type: object
       properties:
         agency_fee:
-          multipleOf: 0.01
           type: number
-        airline_cc_payment:
           multipleOf: 0.01
+        booking:
+          $ref: '#/components/schemas/APIHotelBookRequest'
+        check_in:
+          $ref: '#/components/schemas/Day'
+        check_out:
+          $ref: '#/components/schemas/Day'
+        payment_commission:
           type: number
-        allow_duplicates:
-          type: boolean
-        digest:
+          multipleOf: 0.01
+        payment_creds:
+          $ref: '#/components/schemas/APIPaymentCredsP'
+        session_id:
+          $ref: '#/components/schemas/UUID'
+        total_price:
+          type: number
+          multipleOf: 0.01
+      required:
+        - agency_fee
+        - booking
+        - check_in
+        - check_out
+        - payment_commission
+        - payment_creds
+        - session_id
+        - total_price
+    APIHotelBookRequest:
+      type: object
+      properties:
+        guests:
+          $ref: '#/components/schemas/Guests'
+        hotel_id:
           type: string
+        package_id:
+          type: string
+        rooms_remarks:
+          type: array
+          items:
+            type: array
+            minItems: 2
+            maxItems: 2
+      required:
+        - guests
+        - hotel_id
+        - package_id
+        - rooms_remarks
+    Guests:
+      type: object
+      properties:
+        contact_data:
+          $ref: '#/components/schemas/GuestContacts'
+        lead_guest:
+          type: array
+          minItems: 2
+          maxItems: 2
+        room_guests:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/RoomGuestsInfo'
+      required:
+        - contact_data
+        - lead_guest
+        - room_guests
+    GuestContacts:
+      type: object
+      properties:
         email:
           type: string
-        expected_agent_net_price:
-          multipleOf: 0.01
-          type: number
-        external:
-          type: boolean
-        passengers:
-          items:
-            $ref: '#/components/schemas/Passenger_Person'
-          minItems: 1
-          type: array
-        payment_option:
-          $ref: '#/components/schemas/PaymentOption'
         phone:
           type: string
       required:
-        - digest
-        - passengers
+        - email
         - phone
-        - payment_option
+    RoomGuestsInfo:
       type: object
-    BookingSource:
-      oneOf:
-        - properties:
-            tag:
-              enum:
-                - amadeus
-              type: string
-          required:
-            - tag
-          title: BSAmadeus
-          type: object
-        - properties:
-            airline:
-              type: string
-            tag:
-              enum:
-                - ndc_direct
-              type: string
-          required:
-            - airline
-            - tag
-          title: BSNdcDirect
-          type: object
-        - properties:
-            tag:
-              enum:
-                - ndc_partner
-              type: string
-          required:
-            - tag
-          title: BSNdcPartner
-          type: object
-    CabinClass:
-      enum:
-        - economy
-        - premium
-        - business
-        - first
-      type: string
-    CancelContext:
-      enum:
-        - not_all_tickets_eligible
-        - booking_record_has_problems
-      type: string
-    ChangeContext:
-      enum:
-        - source_not_supported
-        - no_issued_tickets
-        - tickets_expired
-        - nothing_to_change
-        - not_homogenous
-        - blocked_by_check_in_process
-        - blocked_by_fare_rules
-        - booking_record_has_problems
-      type: string
-    ChangeScope:
       properties:
-        flights:
-          items:
-            $ref: '#/components/schemas/FlightChangeOptions'
+        adults_count:
+          type: integer
+          minimum: 0
+          maximum: 255
+        kids_ages:
           type: array
-      required:
-        - flights
-      type: object
-    ChildPassenger_PassengerInfo:
-      properties:
-        child:
-          $ref: '#/components/schemas/PassengerInfo'
-      required:
-        - child
-      type: object
-    ChildPassenger_Person:
-      properties:
-        child:
-          $ref: '#/components/schemas/Person'
-      required:
-        - child
-      type: object
-    ConfirmPriceChangeRequest:
-      properties:
-        expected_agent_net_price:
-          multipleOf: 0.01
-          type: number
-      required:
-        - expected_agent_net_price
-      type: object
-    CouponStatus:
-      enum:
-        - open
-        - checked_in
-        - exchanged
-        - used
-        - refunded
-        - voided
-        - blocked
-      type: string
-    CreateOrderComment:
-      properties:
-        comment:
+          items:
+            type: integer
+            minimum: 0
+            maximum: 17
+        known_guests:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Guest'
+        room_id:
           type: string
-        order_id:
-          $ref: '#/components/schemas/UUID'
       required:
-        - order_id
-        - comment
+        - known_guests
+        - room_id
+    Guest:
       type: object
+      properties:
+        address_line:
+          type: string
+        age:
+          $ref: '#/components/schemas/AgeOrBirth'
+        city:
+          type: string
+        first_name:
+          type: string
+        gender:
+          $ref: '#/components/schemas/Gender'
+        guest_id:
+          $ref: '#/components/schemas/UUID'
+        last_name:
+          type: string
+        middle_name:
+          type: string
+        nationality:
+          type: string
+        postal_code:
+          type: string
+        street:
+          type: string
+      required:
+        - age
+        - first_name
+        - guest_id
+        - last_name
+        - nationality
+    AgeOrBirth:
+      oneOf:
+        - type: object
+          title: Age
+          properties:
+            age:
+              $ref: '#/components/schemas/GuestAge'
+          required:
+            - age
+        - type: object
+          title: Birthday
+          properties:
+            birthday:
+              $ref: '#/components/schemas/Day'
+          required:
+            - birthday
+    GuestAge:
+      oneOf:
+        - type: string
+          enum:
+            - adult
+          title: AdultAge
+        - type: integer
+          title: TChildAge
+          minimum: 0
+          maximum: 17
+    Gender:
+      type: string
+      enum:
+        - male
+        - female
+    APIPaymentCredsP:
+      oneOf:
+        - type: string
+          enum:
+            - cheque
+          title: APIPPaymentCheque
+        - $ref: '#/components/schemas/CreditCardInfo'
+    CreditCardInfo:
+      type: object
+      properties:
+        billing_address:
+          $ref: '#/components/schemas/APIBillingAddress'
+        credit_card:
+          $ref: '#/components/schemas/CreditCard'
+      required:
+        - billing_address
+        - credit_card
+    APIBillingAddress:
+      type: object
+      properties:
+        address_line:
+          type: string
+        city:
+          type: string
+        country_code:
+          type: string
+        phone:
+          type: string
+        state:
+          type: string
+        zip_code:
+          type: string
+      required:
+        - address_line
+        - city
+        - country_code
+        - phone
+        - zip_code
     CreditCard:
+      type: object
       properties:
         expiration_date:
           type: string
@@ -464,634 +791,345 @@ components:
         zip_code:
           type: string
       required:
-        - number
-        - holder_name
         - expiration_date
-      type: object
-    CreditCardType:
-      enum:
-        - visa
-        - mastercard
-        - american_express
-        - diners_club
-        - discover
-        - jcb
-        - unionpay
-      type: string
-    CurrencyCode:
-      enum:
-        - USD
-      example: USD
-      type: string
-    Day:
-      example: '2016-07-22'
-      format: date
-      type: string
-    Editor:
-      properties:
-        email:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-        timestamp:
-          $ref: '#/components/schemas/UTCTime'
-      required:
-        - first_name
-        - last_name
-        - email
-        - timestamp
-      type: object
-
-    ExchangedTicket:
-      properties:
-        exchanged_at:
-          $ref: '#/components/schemas/UTCTime'
-        id:
-          $ref: '#/components/schemas/UUID'
-        ticket_number:
-          type: string
-      required:
-        - id
-        - ticket_number
-        - exchanged_at
-      type: object
-    FareRules:
-      properties:
-        adult:
-          $ref: '#/components/schemas/PaxTypeRules'
-        child:
-          $ref: '#/components/schemas/PaxTypeRules'
-        fare_bases:
-          items:
-            type: string
-          minItems: 1
-          type: array
-        infant:
-          $ref: '#/components/schemas/PaxTypeRules'
-      required:
-        - adult
-        - fare_bases
-      type: object
-    FareType:
-      enum:
-        - published
-        - nego
-        - web
-      type: string
-    FlightAirport:
-      properties:
-        iata:
-          type: string
-        name:
-          type: string
-      required:
-        - iata
-        - name
-      type: object
-    FlightCarrier:
-      properties:
-        iata:
-          type: string
-        name:
-          type: string
-        uuid:
-          $ref: '#/components/schemas/UUID'
-      required:
-        - iata
-        - uuid
-        - name
-      type: object
-    FlightChangeOptions:
-      properties:
-        can_change_cabin:
-          type: boolean
-        can_change_departure_date:
-          type: boolean
-        can_change_departure_point:
-          type: boolean
-        can_change_destination_point:
-          type: boolean
-        index:
-          maximum: 9223372036854776000
-          minimum: -9223372036854776000
-          type: integer
-      required:
-        - index
-        - can_change_departure_point
-        - can_change_departure_date
-        - can_change_destination_point
-        - can_change_cabin
-      type: object
-    FlightCity:
-      properties:
-        country:
-          type: string
-        iata:
-          type: string
-        name:
-          type: string
-      required:
-        - iata
-        - name
-        - country
-      type: object
-    FlightCoupon:
-      properties:
-        code:
-          type: string
-        status:
-          anyOf:
-            - $ref: '#/components/schemas/CouponStatus'
-            - type: string
-          description: Extensible enum
-      required:
-        - status
-      type: object
-    FlightSearchRequestV2:
-      properties:
-        cabin:
-          $ref: '#/components/schemas/MultipleChoiceFilter_CabinClass'
-        carriers:
-          $ref: '#/components/schemas/MultipleChoiceFilter_IataCode'
-        exclude_basic_economy:
-          type: boolean
-        fare_types:
-          $ref: '#/components/schemas/MultipleChoiceFilter_FareType'
-        fast_search:
-          type: boolean
-        flights:
-          items:
-            $ref: '#/components/schemas/SearchSegment'
-          minItems: 1
-          type: array
-        include_details:
-          items:
-            $ref: '#/components/schemas/IncludeDetails'
-          type: array
-        passengers:
-          $ref: '#/components/schemas/SearchPassengers'
-        sources:
-          $ref: '#/components/schemas/MultipleChoiceFilter_SourceV2'
-      required:
-        - flights
-        - passengers
-      type: object
-    FlightSearchResponseV2:
-      properties:
-        flight_segments:
-          items:
-            $ref: '#/components/schemas/FlightSegmentV2'
-          type: array
-        offers:
-          items:
-            $ref: '#/components/schemas/OfferV2'
-          type: array
-        price_classes:
-          items:
-            $ref: '#/components/schemas/PriceClass'
-          type: array
-      required:
-        - offers
-        - flight_segments
-        - price_classes
-      type: object
-    FlightSegmentPoint:
-      properties:
-        city:
-          type: string
-        iata:
-          type: string
-        terminal:
-          type: string
-        timestamp:
-          $ref: '#/components/schemas/ZonedTime'
-      required:
-        - city
-        - iata
-        - timestamp
-      type: object
-    FlightSegmentStatus:
-      enum:
-        - confirmed
-        - awaiting_confirmation
-        - inactive
-      type: string
-    FlightSegmentV2:
-      properties:
-        arrival_point:
-          $ref: '#/components/schemas/FlightSegmentPoint'
-        booking_class:
-          example: '?'
-          maxLength: 1
-          minLength: 1
-          type: string
-        cabin:
-          $ref: '#/components/schemas/CabinClass'
-        confirmation_number:
-          type: string
-        departure_point:
-          $ref: '#/components/schemas/FlightSegmentPoint'
-        flight_code:
-          type: string
-        marketing_carrier:
-          $ref: '#/components/schemas/FlightCarrier'
-        operating_carrier:
-          $ref: '#/components/schemas/FlightCarrier'
-        technical_stops:
-          items:
-            $ref: '#/components/schemas/TechnicalStop'
-          type: array
-        vehicle:
-          $ref: '#/components/schemas/Vehicle'
-      required:
-        - departure_point
-        - arrival_point
-        - technical_stops
-        - booking_class
-        - cabin
-        - vehicle
-        - baggage
-        - flight_code
-        - marketing_carrier
-        - operating_carrier
-      type: object
-    FlightWithPriceClass_PriceClassIndex_FlightSegmentIndex:
-      properties:
-        fare_rules:
-          $ref: '#/components/schemas/FareRules'
-        price_class:
-          exclusiveMinimum: false
-          maximum: 9223372036854776000
-          minimum: 0
-          type: integer
-        segments:
-          items:
-            exclusiveMinimum: false
-            maximum: 9223372036854776000
-            minimum: 0
-            type: integer
-          minItems: 1
-          type: array
-      required:
-        - segments
-      type: object
-    FlightWithPriceClass_PriceClass_FlightSegmentV2:
-      properties:
-        fare_rules:
-          $ref: '#/components/schemas/FareRules'
-        price_class:
-          $ref: '#/components/schemas/PriceClass'
-        segments:
-          items:
-            $ref: '#/components/schemas/FlightSegmentV2'
-          minItems: 1
-          type: array
-      required:
-        - segments
-      type: object
-    FollowUpAction:
-      enum:
-        - involuntary_refund
-        - involuntary_exchange
-        - confirm_involuntary_changes
-        - contact_support
-      type: string
-    IdentityCardDocument:
-      properties:
-        expires_at:
-          $ref: '#/components/schemas/Day'
-        issuing_country:
-          type: string
-        number:
-          type: string
-      required:
+        - holder_name
         - number
-        - expires_at
-        - issuing_country
+    APIOrderDetails:
       type: object
-    IncludeDetails:
-      enum:
-        - taxes_per_pax
-      type: string
-    ModifyPaxContext:
-      enum:
-        - source_not_supported
-        - not_all_tickets_eligble
-        - unissued_order_modify_not_recommended
-      type: string
-    MultipleChoiceFilter_CabinClass:
-      oneOf:
-        - enum:
-            - any
-          title: Any
-          type: string
-        - items:
-            $ref: '#/components/schemas/CabinClass'
-          minItems: 1
-          title: OneOf
-          type: array
-    MultipleChoiceFilter_FareType:
-      oneOf:
-        - enum:
-            - any
-          title: Any
-          type: string
-        - items:
-            $ref: '#/components/schemas/FareType'
-          minItems: 1
-          title: OneOf
-          type: array
-    MultipleChoiceFilter_IataCode:
-      oneOf:
-        - enum:
-            - any
-          title: Any
-          type: string
-        - items:
-            type: string
-          minItems: 1
-          title: OneOf
-          type: array
-    MultipleChoiceFilter_SourceV2:
-      oneOf:
-        - enum:
-            - any
-          title: Any
-          type: string
-        - items:
-            $ref: '#/components/schemas/SourceV2'
-          minItems: 1
-          title: OneOf
-          type: array
-    OfferV2:
       properties:
-        alliance:
+        admin_comment:
           type: string
-        basic_economy:
-          type: boolean
-        date_of_birth_required:
-          type: boolean
-        digest:
-          type: string
-        expires_at:
-          $ref: '#/components/schemas/UTCTime'
-        fare_rules:
-          $ref: '#/components/schemas/FareRules'
-        flights:
-          items:
-            $ref: '#/components/schemas/FlightWithPriceClass_PriceClassIndex_FlightSegmentIndex'
-          minItems: 1
-          type: array
-        price:
-          $ref: '#/components/schemas/PricingInfoV2'
-        travel_document_required:
-          type: boolean
-        validating_carrier:
-          $ref: '#/components/schemas/FlightCarrier'
-      required:
-        - flights
-        - basic_economy
-        - validating_carrier
-        - price
-        - digest
-        - travel_document_required
-        - date_of_birth_required
-      type: object
-    OrderComment:
-      properties:
-        author:
-          $ref: '#/components/schemas/Author'
-        comment:
-          type: string
-        created_at:
-          $ref: '#/components/schemas/UTCTime'
-        editors:
-          items:
-            $ref: '#/components/schemas/Editor'
-          type: array
-        id:
-          $ref: '#/components/schemas/UUID'
-      required:
-        - id
-        - comment
-        - author
-        - editors
-        - created_at
-      type: object
-    OrderV2:
-      properties:
         agency_id:
           $ref: '#/components/schemas/UUID'
         agent_id:
           $ref: '#/components/schemas/UUID'
-        booking_records:
-          items:
-            $ref: '#/components/schemas/BookingRecordV2'
-          minItems: 1
-          type: array
-        booking_source:
-          $ref: '#/components/schemas/BookingSource'
-        consortium_id:
-          $ref: '#/components/schemas/UUID'
+        booking_pricing:
+          $ref: '#/components/schemas/APIOrderPricing'
+        booking_remarks:
+          type: string
+        cancellation_policy:
+          $ref: '#/components/schemas/OrderCancellations'
+        check_in_date:
+          $ref: '#/components/schemas/Day'
+        check_out_date:
+          $ref: '#/components/schemas/Day'
         contact_email:
           type: string
         contact_phone:
           type: string
         created_at:
           $ref: '#/components/schemas/UTCTime'
+        has_resort_fees_warning:
+          type: boolean
+        hotel:
+          $ref: '#/components/schemas/APIOrderHotel'
         id:
           $ref: '#/components/schemas/UUID'
         is_external:
           type: boolean
-        payments:
-          items:
-            $ref: '#/components/schemas/Payment'
-          type: array
-        queue_host_id:
+        legacy_contact_phone:
           type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIOrderPayment'
         readable_id:
           type: integer
-        refund_invoices:
-          items:
-            $ref: '#/components/schemas/RefundInvoice'
+        refund_pricing:
+          $ref: '#/components/schemas/APIOrderPricing'
+        rooms:
           type: array
-        sell_invoices:
+          minItems: 1
           items:
-            $ref: '#/components/schemas/SellInvoice'
-          type: array
-        temporary:
-          type: boolean
+            $ref: '#/components/schemas/APIOrderRoom'
+        supplier:
+          $ref: '#/components/schemas/APIOrderSupplier'
+        supplier_order_id:
+          type: string
         updated_at:
           $ref: '#/components/schemas/UTCTime'
-        validating_carrier:
-          $ref: '#/components/schemas/FlightCarrier'
       required:
-        - id
-        - agent_id
         - agency_id
-        - readable_id
-        - is_external
-        - contact_phone
+        - booking_pricing
+        - cancellation_policy
+        - check_in_date
+        - check_out_date
         - contact_email
-        - booking_source
-        - validating_carrier
-        - booking_records
+        - contact_phone
         - created_at
-        - updated_at
-        - sell_invoices
-        - refund_invoices
+        - has_resort_fees_warning
+        - hotel
+        - id
+        - is_external
         - payments
-        - temporary
+        - readable_id
+        - rooms
+        - updated_at
+    APIOrderPricing:
       type: object
-    PassengerInfo:
       properties:
-        air_ticket:
-          $ref: '#/components/schemas/TicketV2'
-        birthdate:
-          $ref: '#/components/schemas/Day'
-        bonus_card:
-          $ref: '#/components/schemas/BonusCard'
-        bonus_cards:
-          items:
-            $ref: '#/components/schemas/BonusCard'
+        additional_fees:
           type: array
-        exchanged_tickets:
           items:
-            $ref: '#/components/schemas/ExchangedTicket'
-          type: array
-        id:
-          $ref: '#/components/schemas/UUID'
-        identity_cards:
-          items:
-            $ref: '#/components/schemas/IdentityCardDocument'
-          type: array
-        ktn:
+            $ref: '#/components/schemas/AdditionalFee'
+        agency_commission:
+          type: number
+          multipleOf: 0.01
+        dtt_fee:
+          type: number
+          multipleOf: 0.01
+        final_tax:
+          type: number
+          multipleOf: 0.01
+        payment_commission:
+          type: number
+          multipleOf: 0.01
+        rate:
+          type: number
+          multipleOf: 0.01
+        special_tax:
+          type: number
+          multipleOf: 0.01
+        total_price:
+          type: number
+          multipleOf: 0.01
+      required:
+        - additional_fees
+        - agency_commission
+        - dtt_fee
+        - final_tax
+        - payment_commission
+        - rate
+        - special_tax
+        - total_price
+    AdditionalFee:
+      type: object
+      properties:
+        room_name:
           type: string
-        middle_name:
+        title:
+          type: string
+        unit_type:
+          $ref: '#/components/schemas/FeeUnitType'
+        units:
+          type: string
+        value:
+          type: number
+          multipleOf: 0.01
+      required:
+        - title
+        - units
+        - value
+    FeeUnitType:
+      type: string
+      enum:
+        - other
+        - not_applicable
+        - not_specified
+        - per_child
+        - per_adult
+        - per_night
+        - per_room
+        - per_stay
+        - per_person
+        - per_occurrence
+        - per_item
+        - per_reservation
+    OrderCancellations:
+      type: object
+      properties:
+        first_cancellation:
+          $ref: '#/components/schemas/CancellationPolicy'
+        refundability:
+          $ref: '#/components/schemas/Refundability'
+        rest_cancellations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CancellationPolicy'
+      required:
+        - first_cancellation
+        - refundability
+        - rest_cancellations
+    CancellationPolicy:
+      type: object
+      properties:
+        date_from:
+          $ref: '#/components/schemas/UTCTime'
+        date_to:
+          $ref: '#/components/schemas/UTCTime'
+        fee_details:
+          $ref: '#/components/schemas/CancellationFeeDetails'
+        total_fee:
+          type: number
+          multipleOf: 0.01
+      required:
+        - date_from
+        - date_to
+        - fee_details
+        - total_fee
+    UTCTime:
+      type: string
+      format: 'yyyy-mm-ddThh:MM:ssZ'
+      example: '2016-07-22T00:00:00Z'
+    CancellationFeeDetails:
+      type: object
+      properties:
+        agency_cancellation_fee:
+          type: number
+          multipleOf: 0.01
+        dtt_cancellation_fee:
+          type: number
+          multipleOf: 0.01
+        hotel_cancellation_fee:
+          type: number
+          multipleOf: 0.01
+        payment_cancellation_fee:
+          type: number
+          multipleOf: 0.01
+      required:
+        - hotel_cancellation_fee
+    Refundability:
+      oneOf:
+        - type: object
+          title: NonRefundable
+          properties:
+            tag:
+              type: string
+              enum:
+                - non_refundable
+          required:
+            - tag
+        - type: object
+          title: PartiallyRefundable
+          properties:
+            tag:
+              type: string
+              enum:
+                - partially_refundable
+          required:
+            - tag
+        - type: object
+          title: RefundableTill
+          properties:
+            contents:
+              $ref: '#/components/schemas/UTCTime'
+            tag:
+              type: string
+              enum:
+                - refundable_till
+          required:
+            - contents
+            - tag
+    APIOrderHotel:
+      type: object
+      properties:
+        address:
+          type: string
+        coordinates:
+          $ref: '#/components/schemas/Location'
+        facilities:
+          type: array
+          items:
+            type: string
+        id:
           type: string
         name:
           type: string
-        nationality:
+        phone:
           type: string
-        passports:
-          items:
-            $ref: '#/components/schemas/PassportDocument'
+        property_category:
+          $ref: '#/components/schemas/PropertyType'
+        property_descriptions:
           type: array
-        sex:
-          $ref: '#/components/schemas/Sex'
-        surname:
+          items:
+            $ref: '#/components/schemas/PropertyDescription'
+        star_rating:
+          type: integer
+          minimum: -9223372036854776000
+          maximum: 9223372036854776000
+        zh_order_id:
           type: string
-        travel_document:
-          $ref: '#/components/schemas/TravelDocument'
+        zip_code:
+          type: string
       required:
+        - coordinates
+        - facilities
         - id
         - name
-        - surname
-        - passports
-        - identity_cards
-        - bonus_cards
-        - sex
-        - nationality
-        - air_ticket
-        - exchanged_tickets
+        - property_category
+        - property_descriptions
+    PropertyType:
+      type: string
+      enum:
+        - property_hotel
+        - property_apartment
+        - property_hostel
+        - property_guesthouse
+        - property_aparthotel
+        - property_other
+    PropertyDescription:
       type: object
-    Passenger_PassengerInfo:
-      oneOf:
-        - $ref: '#/components/schemas/AdultPassenger_PassengerInfo'
-        - $ref: '#/components/schemas/ChildPassenger_PassengerInfo'
-    Passenger_Person:
-      oneOf:
-        - $ref: '#/components/schemas/AdultPassenger_Person'
-        - $ref: '#/components/schemas/ChildPassenger_Person'
-    PassportDocument:
       properties:
-        expires_at:
-          $ref: '#/components/schemas/Day'
-        issuing_country:
+        group:
           type: string
-        number:
-          type: string
-      required:
-        - number
-        - expires_at
-        - issuing_country
-      type: object
-    PaxSegmentV2:
-      properties:
-        flight_coupon:
-          $ref: '#/components/schemas/FlightCoupon'
-        seats:
-          items:
-            $ref: '#/components/schemas/Seat'
+        paragraphs:
           type: array
-        status:
-          anyOf:
-            - $ref: '#/components/schemas/FlightSegmentStatus'
-            - type: string
-          description: Extensible enum
+          items:
+            type: string
+        subgroup:
+          type: string
+        title:
+          type: string
       required:
-        - seats
-        - status
+        - group
+        - paragraphs
+    APIOrderPayment:
       type: object
-    PaxTypeRules:
-      properties:
-        change:
-          $ref: '#/components/schemas/ActionRule'
-        refund:
-          $ref: '#/components/schemas/ActionRule'
-      type: object
-    Payment:
       properties:
         amount:
-          multipleOf: 0.01
           type: number
-        created_at:
-          $ref: '#/components/schemas/UTCTime'
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
+          multipleOf: 0.01
+        anti_fraud_decision:
+          $ref: '#/components/schemas/APIAntiFraudDecision'
+        due_date:
+          $ref: '#/components/schemas/Day'
         id:
-          $ref: '#/components/schemas/UUID'
-        invoice_id:
           $ref: '#/components/schemas/UUID'
         pan_cc:
           type: string
-        parent_payment_id:
-          $ref: '#/components/schemas/UUID'
         status:
-          $ref: '#/components/schemas/PaymentStatus'
-        status_updated_at:
+          $ref: '#/components/schemas/APIOrderPaymentStatus'
+        typ:
+          $ref: '#/components/schemas/APIHotelsPaymentType'
+        updated_at:
           $ref: '#/components/schemas/UTCTime'
-        type:
-          $ref: '#/components/schemas/PaymentType'
       required:
-        - id
-        - invoice_id
-        - created_at
-        - type
-        - currency_code
         - amount
+        - id
         - status
-        - status_updated_at
-      type: object
-    PaymentOption:
-      enum:
-        - passenger_cc
-        - agent_cash
-        - passenger_cc_single_payment
-        - custom
+        - typ
+        - updated_at
+    APIAntiFraudDecision:
       type: string
-    PaymentStatus:
       enum:
+        - approved
+        - declined_fraudulent
+        - declined_high_risk
+        - declined_considerable_risk
+        - unknown
+    APIOrderPaymentStatus:
+      type: string
+      enum:
+        - pending
         - processing
-        - rejected
-        - authorized
         - charged
-        - issued
+        - authorized
         - canceled
+        - rejected
+        - error
+        - issued
+    APIHotelsPaymentType:
       type: string
-    PaymentType:
       enum:
         - merchant_charge
         - check_to_agency
@@ -1101,1242 +1139,515 @@ components:
         - refund_check_from_agency
         - agency_refund
         - refund_check_to_agency
-        - vendor_charge
-        - vendor_refund
+    APIOrderRoom:
+      type: object
+      properties:
+        adult_guests:
+          type: integer
+          minimum: 0
+          maximum: 255
+        bed_type:
+          type: string
+        booking_remarks:
+          type: array
+          items:
+            type: string
+        booking_status:
+          $ref: '#/components/schemas/APIRoomStatus'
+        facilities:
+          type: array
+          items:
+            type: string
+        id:
+          $ref: '#/components/schemas/UUID'
+        kids_ages:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 255
+        lead_guest:
+          $ref: '#/components/schemas/APIOrderGuest'
+        meal_plan:
+          $ref: '#/components/schemas/MealPlan'
+        name:
+          type: string
+        refund_status:
+          $ref: '#/components/schemas/APIRefundStatus'
+        room_src_id:
+          type: string
+        status_updated_at:
+          $ref: '#/components/schemas/UTCTime'
+        supplier_segment_id:
+          type: string
+        tv_segment_id:
+          type: integer
+      required:
+        - adult_guests
+        - facilities
+        - id
+        - kids_ages
+        - lead_guest
+        - name
+        - room_src_id
+        - status_updated_at
+    APIRoomStatus:
       type: string
-    PenaltyFee:
-      properties:
-        amount:
-          multipleOf: 0.001
-          type: number
-        currency:
-          type: string
-      required:
-        - currency
-        - amount
+      enum:
+        - pending
+        - rejected
+        - processing_booking
+        - booked
+        - processing_cancel
+        - cancel_error
+        - booking_error
+        - canceled
+    APIOrderGuest:
       type: object
-    PerPaxPrice_MoneyUSD:
       properties:
-        adult:
-          multipleOf: 0.01
-          type: number
-        child:
-          multipleOf: 0.01
-          type: number
-        infant:
-          multipleOf: 0.01
-          type: number
-      required:
-        - adult
-      type: object
-    PerPaxPrice_TaxWithBreakdown:
-      properties:
-        adult:
-          $ref: '#/components/schemas/TaxWithBreakdown'
-        child:
-          $ref: '#/components/schemas/TaxWithBreakdown'
-        infant:
-          $ref: '#/components/schemas/TaxWithBreakdown'
-      required:
-        - adult
-      type: object
-    Person:
-      properties:
-        birthday:
-          $ref: '#/components/schemas/Day'
-        bonus_card:
-          $ref: '#/components/schemas/BonusCard'
-        first_name:
-          type: string
         last_name:
           type: string
-        middle_name:
+        name:
           type: string
         nationality:
           type: string
-        sex:
-          $ref: '#/components/schemas/Sex'
-        travel_document:
-          $ref: '#/components/schemas/TravelDocument'
+        second_name:
+          type: string
+        title:
+          type: string
       required:
-        - first_name
         - last_name
+        - name
         - nationality
-        - birthday
-        - sex
+        - title
+    APIRefundStatus:
+      type: string
+      enum:
+        - refund_processing
+        - refund_issued
+    APIOrderSupplier:
       type: object
-    PreliminaryRequest:
       properties:
-        agency_fee:
-          multipleOf: 0.01
-          type: number
-        airline_cc_payment:
-          multipleOf: 0.01
-          type: number
-        digest:
+        booking_source:
+          $ref: '#/components/schemas/APIHotelBookingSource'
+        email:
           type: string
-        run_upsell:
-          type: boolean
-      required:
-        - digest
-        - run_upsell
-      type: object
-    PreliminaryResponseV2:
-      properties:
-        fare_rule_texts:
-          additionalProperties:
-            type: string
-          type: object
-        flight_segments:
-          items:
-            $ref: '#/components/schemas/FlightSegmentV2'
-          type: array
-        offers:
-          items:
-            $ref: '#/components/schemas/OfferV2'
-          minItems: 1
-          type: array
-        price_classes:
-          items:
-            $ref: '#/components/schemas/PriceClass'
-          type: array
-      required:
-        - offers
-        - flight_segments
-        - fare_rule_texts
-        - price_classes
-      type: object
-    PriceChanged:
-      properties:
-        message:
-          type: string
-        order_id:
-          $ref: '#/components/schemas/UUID'
-        pricing:
-          $ref: '#/components/schemas/PricingInfoV2'
-        reason:
-          enum:
-            - price_changed
-          type: string
-      required:
-        - message
-        - pricing
-        - order_id
-        - reason
-      type: object
-    PriceClass:
-      properties:
-        code:
-          type: string
-        descriptions:
-          items:
-            type: string
-          type: array
         name:
+          type: string
+        phone:
+          type: string
+        website:
           type: string
       required:
         - name
-        - descriptions
-      type: object
-    PricingCC:
-      properties:
-        agency_cash_payment:
-          multipleOf: 0.01
-          type: number
-        agent_net_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        agent_net_total:
-          multipleOf: 0.01
-          type: number
-        agent_service_fee:
-          multipleOf: 0.01
-          type: number
-        airline_agent_markup:
-          multipleOf: 0.01
-          type: number
-        airline_cc_payment:
-          multipleOf: 0.01
-          type: number
-        allowed_cc_types:
-          items:
-            $ref: '#/components/schemas/CreditCardType'
-          type: array
-        cc_transaction_fee:
-          multipleOf: 0.01
-          type: number
-        merchant_cc_payment:
-          multipleOf: 0.01
-          type: number
-        passenger_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        passenger_total:
-          multipleOf: 0.01
-          type: number
-      required:
-        - allowed_cc_types
-        - agent_net_total
-        - agent_net_per_pax
-        - airline_cc_payment
-        - merchant_cc_payment
-        - agency_cash_payment
-        - passenger_total
-        - passenger_per_pax
-        - airline_agent_markup
-        - agent_service_fee
-        - cc_transaction_fee
-      type: object
-    PricingCash:
-      properties:
-        agency_cash_payment:
-          multipleOf: 0.01
-          type: number
-        agent_net_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        agent_net_total:
-          multipleOf: 0.01
-          type: number
-        agent_service_fee:
-          multipleOf: 0.01
-          type: number
-        passenger_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        passenger_total:
-          multipleOf: 0.01
-          type: number
-      required:
-        - agent_net_total
-        - agent_net_per_pax
-        - agency_cash_payment
-        - passenger_total
-        - passenger_per_pax
-        - agent_service_fee
-      type: object
-    PricingCustom:
-      properties:
-        agency_cash_payment:
-          multipleOf: 0.01
-          type: number
-        agent_net_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        agent_net_total:
-          multipleOf: 0.01
-          type: number
-        agent_service_fee:
-          multipleOf: 0.01
-          type: number
-        passenger_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        passenger_total:
-          multipleOf: 0.01
-          type: number
-      required:
-        - agent_net_total
-        - agent_net_per_pax
-        - agency_cash_payment
-        - passenger_total
-        - passenger_per_pax
-        - agent_service_fee
-      type: object
-    PricingInfoV2:
-      properties:
-        advanced_pricing_details:
-          $ref: '#/components/schemas/AdvancedPricingDetails'
-        agent_commission:
-          multipleOf: 0.01
-          type: number
-        agent_extra_fee:
-          multipleOf: 0.01
-          type: number
-        agent_preset_fee:
-          multipleOf: 0.01
-          type: number
-        airline_base_fare:
-          multipleOf: 0.01
-          type: number
-        airline_base_fare_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
-        airline_taxes:
-          multipleOf: 0.01
-          type: number
-        airline_taxes_per_pax:
-          $ref: '#/components/schemas/PerPaxPrice_TaxWithBreakdown'
-        airline_total:
-          multipleOf: 0.01
-          type: number
-        consolidator_discount:
-          multipleOf: 0.01
-          type: number
-        consolidator_fee:
-          multipleOf: 0.01
-          type: number
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
-        penalty:
-          multipleOf: 0.01
-          type: number
-        pricing_options:
-          $ref: '#/components/schemas/PricingOptions'
-      required:
-        - currency_code
-        - airline_base_fare
-        - airline_base_fare_per_pax
-        - airline_taxes
-        - airline_total
-        - consolidator_fee
-        - consolidator_discount
-        - agent_commission
-        - agent_preset_fee
-        - agent_extra_fee
-        - pricing_options
-        - advanced_pricing_details
-      type: object
-    PricingOptions:
-      properties:
-        agent_cash:
-          $ref: '#/components/schemas/PricingCash'
-        custom:
-          $ref: '#/components/schemas/PricingCustom'
-        passenger_cc:
-          $ref: '#/components/schemas/PricingCC'
-        passenger_cc_single_payment:
-          $ref: '#/components/schemas/PricingCC'
-      type: object
-    ProductStatus:
-      enum:
-        - booked
-        - processing_cancel
-        - failed_cancel
-        - canceled
-        - processing_issue
-        - failed_issue
-        - terminated_issue
-        - issued
-        - processing_void
-        - failed_void
-        - voided
-        - processing_exchange
-        - exchanged
-        - refunded
-        - failed_exchange
-        - terminated_refund
-        - processing_refund
-        - failed_refund
+    APIHotelBookingSource:
       type: string
-    RefundComponents:
-      properties:
-        tickets:
-          items:
-            $ref: '#/components/schemas/RefundItem'
-          type: array
-      required:
-        - tickets
-      type: object
-    RefundContext:
       enum:
-        - source_not_supported
-        - not_all_tickets_eligible
-        - not_homogeneous
-        - inappropriate_coupons_statuses
-        - tickets_expired
-        - blocked_by_fare_rules
-        - booking_record_has_problems
-      type: string
-    RefundError:
-      oneOf:
-        - $ref: '#/components/schemas/RefundTimeLimit'
-        - $ref: '#/components/schemas/RefundNDCError'
-    RefundInput:
+        - tv
+        - zh
+    APIOrderDetailsExt:
+      type: object
       properties:
-        id:
+        admin_comment:
           type: string
-      required:
-        - id
-      type: object
-    RefundInvoice:
-      properties:
-        components:
-          $ref: '#/components/schemas/RefundComponents'
+        agency_id:
+          $ref: '#/components/schemas/UUID'
+        agent_id:
+          $ref: '#/components/schemas/UUID'
+        booking_pricing:
+          $ref: '#/components/schemas/APIOrderPricing'
+        booking_remarks:
+          type: string
+        cancellation_policy:
+          $ref: '#/components/schemas/OrderCancellations'
+        check_in_date:
+          $ref: '#/components/schemas/Day'
+        check_out_date:
+          $ref: '#/components/schemas/Day'
+        contact_email:
+          type: string
+        contact_phone:
+          type: string
         created_at:
           $ref: '#/components/schemas/UTCTime'
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
+        has_resort_fees_warning:
+          type: boolean
+        hotel:
+          $ref: '#/components/schemas/APIOrderHotelExt'
         id:
           $ref: '#/components/schemas/UUID'
+        legacy_contact_phone:
+          type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIOrderPayment'
+        readable_id:
+          type: integer
+        refund_pricing:
+          $ref: '#/components/schemas/APIOrderPricing'
+        rooms:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/APIOrderRoomExt'
+        supplier:
+          $ref: '#/components/schemas/APIOrderSupplier'
+        supplier_order_id:
+          type: string
+        updated_at:
+          $ref: '#/components/schemas/UTCTime'
       required:
-        - id
+        - agency_id
+        - booking_pricing
+        - cancellation_policy
+        - check_in_date
+        - check_out_date
+        - contact_email
+        - contact_phone
         - created_at
-        - currency_code
-        - components
-      type: object
-    RefundItem:
-      properties:
-        agent_extra_fee_to_refund:
-          multipleOf: 0.01
-          type: number
-        agent_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        airline_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        fare_to_refund:
-          multipleOf: 0.01
-          type: number
-        id:
-          $ref: '#/components/schemas/UUID'
-        passenger_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        payment_fee_to_refund:
-          multipleOf: 0.01
-          type: number
-        penalty:
-          multipleOf: 0.01
-          type: number
-        recall_agent_commission:
-          multipleOf: 0.01
-          type: number
-        recall_agent_extra_fee:
-          multipleOf: 0.01
-          type: number
-        recall_consolidator_discount:
-          multipleOf: 0.01
-          type: number
-        taxes_to_refund:
-          multipleOf: 0.01
-          type: number
-      required:
+        - has_resort_fees_warning
+        - hotel
         - id
-        - fare_to_refund
-        - taxes_to_refund
-        - penalty
-        - recall_consolidator_discount
-        - recall_agent_commission
-        - recall_agent_extra_fee
-        - agent_extra_fee_to_refund
-        - payment_fee_to_refund
-        - airline_total_to_refund
-        - agent_total_to_refund
-        - passenger_total_to_refund
+        - payments
+        - readable_id
+        - rooms
+        - updated_at
+    APIOrderHotelExt:
       type: object
-    RefundNDCError:
       properties:
-        message:
+        address:
           type: string
-        reason:
-          enum:
-            - ndc_error
-          type: string
-        ui_error:
-          type: string
-      required:
-        - message
-        - reason
-        - ui_error
-      type: object
-    RefundOffer:
-      properties:
+        coordinates:
+          $ref: '#/components/schemas/Location'
+        facilities:
+          type: array
+          items:
+            type: string
         id:
-          type: string
-        pricing:
-          $ref: '#/components/schemas/RefundPricing'
-        time_limit:
-          $ref: '#/components/schemas/UTCTime'
-      required:
-        - id
-        - pricing
-      type: object
-    RefundOfferError:
-      properties:
-        message:
-          type: string
-        reason:
-          enum:
-            - should_void
-          type: string
-      required:
-        - reason
-        - message
-      type: object
-    RefundPricing:
-      properties:
-        agent_extra_fee_to_refund:
-          multipleOf: 0.01
-          type: number
-        agent_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        airline_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        fare_to_refund:
-          multipleOf: 0.01
-          type: number
-        passenger_total_to_refund:
-          multipleOf: 0.01
-          type: number
-        payment_fee_to_refund:
-          multipleOf: 0.01
-          type: number
-        penalty:
-          multipleOf: 0.01
-          type: number
-        recall_agent_commission:
-          multipleOf: 0.01
-          type: number
-        recall_agent_extra_fee:
-          multipleOf: 0.01
-          type: number
-        recall_consolidator_discount:
-          multipleOf: 0.01
-          type: number
-        taxes_to_refund:
-          multipleOf: 0.01
-          type: number
-      required:
-        - fare_to_refund
-        - taxes_to_refund
-        - penalty
-        - recall_consolidator_discount
-        - recall_agent_commission
-        - recall_agent_extra_fee
-        - agent_extra_fee_to_refund
-        - payment_fee_to_refund
-        - airline_total_to_refund
-        - agent_total_to_refund
-        - passenger_total_to_refund
-      type: object
-    RefundStatus:
-      properties:
-        offer:
-          $ref: '#/components/schemas/RefundOffer'
-      required:
-        - offer
-      type: object
-    RefundTimeLimit:
-      properties:
-        message:
-          type: string
-        reason:
-          enum:
-            - time_limit_over
-          type: string
-      required:
-        - message
-        - reason
-      type: object
-    SearchPassengers:
-      description: 'Additional restrictions: total number of passengers not greater 8, number of infants not greater number of adults'
-      properties:
-        adults:
-          exclusiveMaximum: false
-          exclusiveMinimum: false
-          maximum: 8
-          minimum: 1
-          type: integer
-        children:
-          exclusiveMaximum: false
-          exclusiveMinimum: false
-          maximum: 7
-          minimum: 0
-          type: integer
-        infants:
-          exclusiveMaximum: false
-          exclusiveMinimum: false
-          maximum: 4
-          minimum: 0
-          type: integer
-      required:
-        - adults
-        - children
-        - infants
-      type: object
-    SearchSegment:
-      properties:
-        date:
-          $ref: '#/components/schemas/Day'
-        from:
-          type: string
-        to:
-          type: string
-      required:
-        - from
-        - to
-        - date
-      type: object
-    Seat:
-      properties:
-        column:
-          type: string
-        emd_number:
-          type: string
-        id:
-          $ref: '#/components/schemas/UUID'
-        row:
-          maximum: 9223372036854776000
-          minimum: -9223372036854776000
-          type: integer
-        status:
-          $ref: '#/components/schemas/ProductStatus'
-        status_updated_at:
-          $ref: '#/components/schemas/UTCTime'
-      required:
-        - id
-        - status
-        - status_updated_at
-        - row
-        - column
-      type: object
-    SellComponent:
-      properties:
-        agent_extra_fee:
-          multipleOf: 0.01
-          type: number
-        fare_type:
-          $ref: '#/components/schemas/FareType'
-        items:
-          items:
-            $ref: '#/components/schemas/SellItem'
-          minItems: 1
-          type: array
-      required:
-        - agent_extra_fee
-        - items
-      type: object
-    SellComponents:
-      anyOf:
-        - properties:
-            tickets:
-              minItems: 1
-              type: array
-        - properties:
-            seats:
-              minItems: 1
-              type: array
-      properties:
-        seats:
-          items:
-            $ref: '#/components/schemas/SellComponent'
-          type: array
-        tickets:
-          items:
-            $ref: '#/components/schemas/SellComponent'
-          type: array
-      required:
-        - tickets
-        - seats
-      type: object
-    SellInvoice:
-      properties:
-        components:
-          $ref: '#/components/schemas/SellComponents'
-        created_at:
-          $ref: '#/components/schemas/UTCTime'
-        currency_code:
-          $ref: '#/components/schemas/CurrencyCode'
-        id:
-          $ref: '#/components/schemas/UUID'
-        merchant_cc_payment_fee:
-          multipleOf: 0.01
-          type: number
-        pricing_option:
-          $ref: '#/components/schemas/PaymentOption'
-      required:
-        - id
-        - created_at
-        - pricing_option
-        - currency_code
-        - merchant_cc_payment_fee
-        - components
-      type: object
-    SellItem:
-      properties:
-        agent_commission:
-          multipleOf: 0.01
-          type: number
-        agent_net_total:
-          multipleOf: 0.01
-          type: number
-        airline_base_fare:
-          multipleOf: 0.01
-          type: number
-        airline_taxes:
-          multipleOf: 0.01
-          type: number
-        airline_total:
-          multipleOf: 0.01
-          type: number
-        consolidator_discount:
-          multipleOf: 0.01
-          type: number
-        consolidator_fee:
-          multipleOf: 0.01
-          type: number
-        id:
-          $ref: '#/components/schemas/UUID'
-        passenger_total:
-          multipleOf: 0.01
-          type: number
-        penalty:
-          multipleOf: 0.01
-          type: number
-      required:
-        - id
-        - airline_base_fare
-        - airline_taxes
-        - consolidator_fee
-        - consolidator_discount
-        - agent_commission
-        - agent_net_total
-        - passenger_total
-        - airline_total
-      type: object
-    Sex:
-      enum:
-        - male
-        - female
-      type: string
-    SituationRule:
-      properties:
-        is_permitted:
-          type: boolean
-        max_penalty:
-          $ref: '#/components/schemas/PenaltyFee'
-        min_penalty:
-          $ref: '#/components/schemas/PenaltyFee'
-      required:
-        - is_permitted
-      type: object
-    SourceV2:
-      enum:
-        - amadeus
-        - ndc_direct
-        - ndc_partner
-      type: string
-    TaxBreakdownItem:
-      properties:
-        amount:
-          multipleOf: 0.01
-          type: number
-        code:
-          type: string
-        description:
-          type: string
-      required:
-        - code
-        - amount
-      type: object
-    TaxWithBreakdown:
-      properties:
-        amount:
-          multipleOf: 0.01
-          type: number
-        breakdown:
-          items:
-            $ref: '#/components/schemas/TaxBreakdownItem'
-          type: array
-      required:
-        - amount
-      type: object
-    TechnicalStop:
-      properties:
-        airport:
-          $ref: '#/components/schemas/FlightAirport'
-        arrival_at:
-          $ref: '#/components/schemas/ZonedTime'
-        city:
-          $ref: '#/components/schemas/FlightCity'
-        departure_at:
-          $ref: '#/components/schemas/ZonedTime'
-      required:
-        - airport
-        - city
-        - arrival_at
-        - departure_at
-      type: object
-    TicketContext:
-      enum:
-        - not_confirmed_itinerary
-        - not_all_tickets_eligible
-        - not_permitted_after_ttl
-        - booking_record_has_problems
-      type: string
-    TicketV2:
-      properties:
-        id:
-          $ref: '#/components/schemas/UUID'
-        invalid_flight_coupons:
-          items:
-            $ref: '#/components/schemas/UnusableFlightCoupon'
-          type: array
-        is_valid:
-          type: boolean
-        pax_segments:
-          items:
-            $ref: '#/components/schemas/PaxSegmentV2'
-          minItems: 1
-          type: array
-        status:
-          $ref: '#/components/schemas/ProductStatus'
-        status_updated_at:
-          $ref: '#/components/schemas/UTCTime'
-        ticket_number:
-          type: string
-      required:
-        - id
-        - status
-        - status_updated_at
-        - pax_segments
-        - invalid_flight_coupons
-        - is_valid
-      type: object
-    TicketingError:
-      oneOf:
-        - $ref: '#/components/schemas/PriceChanged'
-    TicketingRequest:
-      properties:
-        agency_fee:
-          multipleOf: 0.01
-          type: number
-        airline_cc_payment:
-          multipleOf: 0.01
-          type: number
-        credit_card:
-          $ref: '#/components/schemas/CreditCard'
-        email:
-          type: string
-        expected_agent_net_price:
-          multipleOf: 0.01
-          type: number
-        passengers:
-          items:
-            $ref: '#/components/schemas/Passenger_Person'
-          minItems: 1
-          type: array
-        payment_option:
-          $ref: '#/components/schemas/PaymentOption'
-        phone:
-          type: string
-        send_itinerary:
-          type: boolean
-      required:
-        - passengers
-        - phone
-        - payment_option
-      type: object
-    TravelDocument:
-      properties:
-        expires_at:
-          $ref: '#/components/schemas/Day'
-        issued_by_country:
-          type: string
-        number:
-          type: string
-        type:
-          $ref: '#/components/schemas/TravelDocumentType'
-      required:
-        - type
-        - number
-        - expires_at
-        - issued_by_country
-      type: object
-    TravelDocumentType:
-      enum:
-        - passport
-        - identity
-      type: string
-    UTCTime:
-      example: '2016-07-22T00:00:00Z'
-      format: yyyy-mm-ddThh:MM:ssZ
-      type: string
-    UUID:
-      example: 00000000-0000-0000-0000-000000000000
-      format: uuid
-      type: string
-    UnusableFlightCoupon:
-      properties:
-        arrival_airport:
-          type: string
-        departure_airport:
-          type: string
-        departure_time:
-          $ref: '#/components/schemas/ZonedTime'
-        status:
-          anyOf:
-            - $ref: '#/components/schemas/CouponStatus'
-            - type: string
-          description: Extensible enum
-      required:
-        - status
-      type: object
-    UpdateOrderComment:
-      properties:
-        comment:
-          type: string
-      required:
-        - comment
-      type: object
-    Vehicle:
-      properties:
-        code:
           type: string
         name:
           type: string
+        phone:
+          type: string
+        property_category:
+          $ref: '#/components/schemas/PropertyType'
+        property_descriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyDescription'
+        star_rating:
+          type: integer
+          minimum: -9223372036854776000
+          maximum: 9223372036854776000
+        zip_code:
+          type: string
       required:
-        - code
+        - coordinates
+        - facilities
+        - id
+        - name
+        - property_category
+        - property_descriptions
+    APIOrderRoomExt:
       type: object
-    VoidContext:
+      properties:
+        adult_guests:
+          type: integer
+          minimum: 0
+          maximum: 255
+        bed_type:
+          type: string
+        booking_remarks:
+          type: array
+          items:
+            type: string
+        booking_status:
+          $ref: '#/components/schemas/APIRoomStatus'
+        facilities:
+          type: array
+          items:
+            type: string
+        id:
+          $ref: '#/components/schemas/UUID'
+        kids_ages:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 255
+        lead_guest:
+          $ref: '#/components/schemas/APIOrderGuest'
+        meal_plan:
+          $ref: '#/components/schemas/MealPlan'
+        name:
+          type: string
+        refund_status:
+          $ref: '#/components/schemas/APIRefundStatus'
+        status_updated_at:
+          $ref: '#/components/schemas/UTCTime'
+      required:
+        - adult_guests
+        - facilities
+        - id
+        - kids_ages
+        - lead_guest
+        - name
+        - status_updated_at
+    APIGetRoomsRequest:
+      type: object
+      properties:
+        hotel_id:
+          type: string
+        session_id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - hotel_id
+        - session_id
+    APIGetRoomsResponse:
+      type: object
+      properties:
+        common_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/APICommonCategory'
+        room_offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIRoomOffer'
+        rooms_content:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIRoomContent'
+        session_id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - common_categories
+        - room_offers
+        - rooms_content
+        - session_id
+    APICommonCategory:
+      type: object
+      properties:
+        common_facilities:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+      required:
+        - common_facilities
+        - name
+    APIRoomOffer:
+      type: object
+      properties:
+        booking_remarks:
+          type: string
+        cancellation_policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CancellationPolicy'
+        has_resort_fees_warning:
+          type: boolean
+        hotel_id:
+          type: string
+        refundability:
+          $ref: '#/components/schemas/APIRefundability'
+        room_offer_id:
+          type: string
+        room_offer_price:
+          $ref: '#/components/schemas/APIPrice'
+        rooms:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/APIRoom'
+        simple_price:
+          type: number
+          multipleOf: 0.01
+        supplier_id:
+          type: string
+        supplier_name:
+          type: string
+      required:
+        - cancellation_policies
+        - has_resort_fees_warning
+        - room_offer_id
+        - rooms
+        - supplier_id
+        - supplier_name
+    APIRefundability:
+      type: string
       enum:
-        - not_all_tickets_eligible
-        - not_permitted_after_departure
-        - voiding_grace_period_expired
-        - penalty_risk
-        - booking_record_has_problems
+        - unknown
+        - refundable
+        - nonrefundable
+    APIPrice:
+      type: object
+      properties:
+        commission:
+          type: number
+          multipleOf: 0.01
+        final_price:
+          type: number
+          multipleOf: 0.01
+        final_tax:
+          type: number
+          multipleOf: 0.01
+        taxes_and_fees:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITaxesAndFees'
+      required:
+        - taxes_and_fees
+    APIRoom:
+      type: object
+      properties:
+        adults_count:
+          type: integer
+          minimum: 0
+          maximum: 255
+        bed_type:
+          type: string
+        description:
+          type: string
+        dtt_pricing:
+          $ref: '#/components/schemas/APIDttPricing'
+        id:
+          type: string
+        kids_ages:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 17
+        meal_plan:
+          $ref: '#/components/schemas/MealPlan'
+        room_name:
+          type: string
+        target_room_key:
+          type: string
+      required:
+        - adults_count
+        - dtt_pricing
+        - id
+        - kids_ages
+        - room_name
+    APIRoomContent:
+      type: object
+      properties:
+        descriptions:
+          type: array
+          items:
+            type: string
+        facilities:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIImage'
+        target_room_key:
+          type: string
+      required:
+        - descriptions
+        - facilities
+        - images
+    APIImage:
+      type: object
+      properties:
+        desc:
+          type: string
+        image_size:
+          $ref: '#/components/schemas/ImageSize'
+        url:
+          type: string
+      required:
+        - url
+    ImageSize:
       type: string
-    ZonedTime:
-      example: '2016-07-22T07:40:00+03:00'
-      format: date-time
-      type: string
-  securitySchemes:
-    air-public-oauth:
-      description: Bearer token
-      scheme: bearer
-      type: http
-info:
-  title: ''
-  version: ''
-openapi: 3.0.0
-paths:
-  /api/public/v2/booking_records/{booking_record_id}/cancel:
-    post:
-      description: Cancel a booking record that has not been issued
-      parameters:
-        - in: path
-          name: booking_record_id
-          required: true
-          schema:
-            format: uuid
+      enum:
+        - standard
+        - xl
+    APIHotelProperties:
+      type: object
+      properties:
+        advantages:
+          type: array
+          items:
             type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingRecordV2'
-          description: ''
-        '404':
-          description: '`booking_record_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/booking_records/{booking_record_id}/create_refund_offer:
-    post:
-      description: Generate a refund offer for the requested passengers
-      parameters:
-        - in: path
-          name: booking_record_id
-          required: true
-          schema:
-            format: uuid
+        detailed_description:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetailedDescriptionItem'
+        facility_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/FacilityCategoriesItem'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/APIImage'
+        long_description:
+          type: array
+          items:
             type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/RefundStatus'
-          description: ''
-        '400':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/RefundOfferError'
-          description: ''
-        '404':
-          description: '`booking_record_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/booking_records/{booking_record_id}/issue:
-    post:
-      description: Issue tickets for a booking record
-      parameters:
-        - in: path
-          name: booking_record_id
-          required: true
-          schema:
-            format: uuid
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PoliciesItem'
+        short_description:
+          type: array
+          items:
             type: string
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/TicketingRequest'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingRecordV2'
-          description: ''
-        '400':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/TicketingError'
-          description: ' or `body`'
-        '404':
-          description: '`booking_record_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/booking_records/{booking_record_id}/refund:
-    post:
-      description: Accept a refund offer
-      parameters:
-        - in: path
-          name: booking_record_id
-          required: true
-          schema:
-            format: uuid
+        typical_description:
+          type: array
+          items:
             type: string
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/RefundInput'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingRecordV2'
-          description: ''
-        '400':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/RefundError'
-          description: ' or `body`'
-        '404':
-          description: '`booking_record_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/booking_records/{booking_record_id}/void:
-    post:
-      description: Void tickets in a booking record and/or cancel the booking record
-      parameters:
-        - in: path
-          name: booking_record_id
-          required: true
-          schema:
-            format: uuid
+      required:
+        - advantages
+        - detailed_description
+        - facility_categories
+        - images
+        - long_description
+        - policies
+        - short_description
+        - typical_description
+    DetailedDescriptionItem:
+      type: object
+      properties:
+        paragraphs:
+          type: array
+          minItems: 1
+          items:
             type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingRecordV2'
-          description: ''
-        '404':
-          description: '`booking_record_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/orders/booking:
-    post:
-      description: Create an order based on the digest from preliminary
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/BookingRequest'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/OrderV2'
-          description: ''
-        '400':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingError'
-          description: ' or `body`'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/orders/comments:
-    delete:
-      description: Delete an order comment with an order
-      parameters:
-        - in: query
-          name: id
-          required: true
-          schema:
-            format: uuid
+        title:
+          type: string
+      required:
+        - paragraphs
+    FacilityCategoriesItem:
+      type: object
+      properties:
+        facilities:
+          type: array
+          items:
             type: string
-      responses:
-        '204':
-          description: ''
-        '400':
-          description: Invalid `id`
-      security:
-        - air-public-oauth: []
-    get:
-      description: Search order comments
-      parameters:
-        - in: query
-          name: order
-          required: true
-          schema:
-            format: uuid
+        name:
+          type: string
+      required:
+        - facilities
+        - name
+    PoliciesItem:
+      type: object
+      properties:
+        paragraphs:
+          type: array
+          minItems: 1
+          items:
             type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                items:
-                  $ref: '#/components/schemas/OrderComment'
-                type: array
-          description: ''
-        '400':
-          description: Invalid `order`
-      security:
-        - air-public-oauth: []
-    post:
-      description: Create a comment associated with an order
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/CreateOrderComment'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/OrderComment'
-          description: ''
-        '400':
-          description: Invalid `body`
-      security:
-        - air-public-oauth: []
-    put:
-      description: Update an order comment
-      parameters:
-        - in: query
-          name: id
-          required: true
-          schema:
-            format: uuid
-            type: string
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderComment'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/OrderComment'
-          description: ''
-        '400':
-          description: Invalid `body` or `id`
-      security:
-        - air-public-oauth: []
-  /api/public/v2/orders/confirm_price_change/{tmp_order_id}:
-    post:
-      description: Confirm booking after price change
-      parameters:
-        - in: path
-          name: tmp_order_id
-          required: true
-          schema:
-            format: uuid
-            type: string
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/ConfirmPriceChangeRequest'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/OrderV2'
-          description: ''
-        '400':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/BookingError'
-          description: ' or `body`'
-        '404':
-          description: '`tmp_order_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/orders/preliminary:
-    post:
-      description: Renew pricing for a digest from search and perform upsell
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/PreliminaryRequest'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/PreliminaryResponseV2'
-          description: ''
-      security:
-        - air-public-oauth: []
-  /api/public/v2/orders/{order_id}:
-    get:
-      description: Get order by its ID
-      parameters:
-        - in: path
-          name: order_id
-          required: true
-          schema:
-            format: uuid
-            type: string
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/OrderV2'
-          description: ''
-        '404':
-          description: '`order_id` not found'
-      security:
-        - air-public-oauth: []
-  /api/public/v2/search:
-    post:
-      description: Perform a search for flight offers
-      parameters:
-        - in: header
-          name: x-verbose-logging
-          required: false
-          schema:
-            type: boolean
-      requestBody:
-        content:
-          application/json;charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/FlightSearchRequestV2'
-      responses:
-        '200':
-          content:
-            application/json;charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/FlightSearchResponseV2'
-          description: ''
-        '400':
-          description: Invalid `body` or `x-verbose-logging`
-      security:
-        - air-public-oauth: []
+        title:
+          type: string
+      required:
+        - paragraphs
+        - title
