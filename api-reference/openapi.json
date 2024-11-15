@@ -3071,7 +3071,7 @@
         },
         "/api/public/v2/booking_records/{booking_record_id}/create_refund_offer": {
             "post": {
-                "description": "Generate a refund offer for the requested passengers",
+                "description": "Generate a refund offer for the  requested passengers",
                 "parameters": [
                     {
                         "in": "path",
