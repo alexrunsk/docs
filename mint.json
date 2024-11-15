@@ -27,7 +27,7 @@
   },
   "tabs": [
     {
-      "name": "API Reference!",      
+      "name": "API Reference",      
       "url": "api-reference",
       "openapi": "/api-reference/openapi.json"
     }
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "group": "Custom Endpoint Examples (not from OpenAPI)",
+      "group": "Custom non-OpenAPI Endpoints",
       "pages": [
         "api-reference/endpoint/get",
         "api-reference/endpoint/create",
