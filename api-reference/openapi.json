@@ -1,2859 +1,2342 @@
 components:
-schemas:
-ActionResult:
-properties:
-finished\_at:
-$ref: '#/components/schemas/UTCTime'
-result:
-$ref: '#/components/schemas/ActionStatus'
-started\_at:
-$ref: '#/components/schemas/UTCTime'
-type:
-$ref: '#/components/schemas/BookingRecordAction'
-required:
-
-* type
-
-* started\_at
-  type: object
-  ActionRule:
-  properties:
-  after\_departure:
-  $ref: '#/components/schemas/SituationRule'
-  before\_departure:
-  $ref: '#/components/schemas/SituationRule'
-  has\_penalty:
-  type: boolean
-  is\_permitted:
-  type: boolean
-  no\_show:
-  $ref: '#/components/schemas/SituationRule'
-  required:
-
-* is\_permitted
-  type: object
-  ActionStatus:
-  enum:
-
-* success
-
-* recoverable\_error
-
-* non\_recoverable\_error
-  type: string
-  AdultPassenger\_PassengerInfo:
-  properties:
-  adult:
-  $ref: '#/components/schemas/PassengerInfo'
-  infant:
-  $ref: '#/components/schemas/PassengerInfo'
-  required:
-
-* adult
-  type: object
-  AdultPassenger\_Person:
-  properties:
-  adult:
-  $ref: '#/components/schemas/Person'
-  infant:
-  $ref: '#/components/schemas/Person'
-  required:
-
-* adult
-  type: object
-  AdvancedPricingDetails:
-  properties:
-  airline\_allowed\_cc\_types:
-  items:
-  $ref: '#/components/schemas/CreditCardType'
-  type: array
-  fare\_type:
-  $ref: '#/components/schemas/FareType'
-  max\_agent\_markup:
-  multipleOf: 0.01
-  type: number
-  source:
-  $ref: '#/components/schemas/SourceV2'
-  split\_payment\_allowed:
-  type: boolean
-  required:
-
-* fare\_type
-
-* split\_payment\_allowed
-
-* airline\_allowed\_cc\_types
-
-* source
-  type: object
-  Author:
-  properties:
-  email:
-  type: string
-  first\_name:
-  type: string
-  last\_name:
-  type: string
-  required:
-
-* first\_name
-
-* last\_name
-
-* email
-  type: object
-  BRMetadata:
-  properties:
-  can\_book\_seats\_context:
-  items:
-  anyOf:
-
-  * $ref: '#/components/schemas/BookSeatsContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_cancel\_context:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/CancelContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_exchange\_context:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/ChangeContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_modify\_pax:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/ModifyPaxContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_refund\_context:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/RefundContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_ticket\_context:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/TicketContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    can\_void\_context:
-    items:
-    anyOf:
-
-  * $ref: '#/components/schemas/VoidContext'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    required:
-
-* can\_refund\_context
-
-* can\_exchange\_context
-
-* can\_void\_context
-
-* can\_cancel\_context
-
-* can\_ticket\_context
-
-* can\_book\_seats\_context
-
-* can\_modify\_pax
-  type: object
-  Baggage:
-  properties:
-  amount:
-  maximum: 9223372036854776000
-  minimum: -9223372036854776000
-  type: integer
-  unit:
-  $ref: '#/components/schemas/BaggageUnit'
-  required:
-
-* amount
-
-* unit
-  type: object
-  BaggageUnit:
-  enum:
-
-* NumberOfPieces
-
-* Kilograms
-
-* Pounds
-  type: string
-  BonusCard:
-  properties:
-  card\_number:
-  type: string
-  carrier\_iata:
-  type: string
-  required:
-
-* card\_number
-
-* carrier\_iata
-  type: object
-  BookSeatsContext:
-  enum:
-
-* source\_not\_supported
-
-* not\_supported\_by\_airline
-
-* no\_issued\_tickets
-
-* booking\_record\_has\_problems
-  type: string
-  BookingError:
-  oneOf:
-
-* $ref: '#/components/schemas/BookingFailed'
-
-* $ref: '#/components/schemas/PriceChanged'
-  BookingFailed:
-  properties:
-  message:
-  type: string
-  reason:
-  enum:
-
-  * failed
-    type: string
-    required:
-
-* message
-
-* reason
-  type: object
-  BookingRecordAction:
-  enum:
-
-* book
-
-* cancel
-
-* issue
-
-* book\_seats
-
-* exchange
-
-* void
-
-* refund
-  type: string
-  BookingRecordProblem:
-  enum:
-
-* airline\_interruption
-
-* disrupted
-
-* manual\_update
-
-* involuntary\_cancellation
-
-* passengers\_mismatch
-
-* last\_action\_support\_required
-  type: string
-  BookingRecordV2:
-  properties:
-  airline\_record\_locator:
-  type: string
-  can\_book\_seats:
-  type: boolean
-  can\_cancel:
-  type: boolean
-  can\_exchange:
-  type: boolean
-  can\_modify\_pax:
-  type: boolean
-  can\_refund:
-  type: boolean
-  can\_ticket:
-  type: boolean
-  can\_void:
-  type: boolean
-  change\_scope:
-  $ref: '#/components/schemas/ChangeScope'
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  fare\_price\_guarantee\_time\_limit:
-  $ref: '#/components/schemas/UTCTime'
-  fare\_rule\_texts:
-  additionalProperties:
-  type: string
-  type: object
-  fare\_rules:
-  $ref: '#/components/schemas/FareRules'
-  flights:
-  items:
-  $ref: '#/components/schemas/FlightWithPriceClass\_PriceClass\_FlightSegmentV2'
-  minItems: 1
-  type: array
-  follow\_up\_actions:
-  items:
-  $ref: '#/components/schemas/FollowUpAction'
-  type: array
-  uniqueItems: true
-  id:
-  $ref: '#/components/schemas/UUID'
-  involuntary\_change\_scope:
-  $ref: '#/components/schemas/ChangeScope'
-  last\_action:
-  $ref: '#/components/schemas/ActionResult'
-  metadata:
-  $ref: '#/components/schemas/BRMetadata'
-  passengers:
-  items:
-  $ref: '#/components/schemas/Passenger\_PassengerInfo'
-  minItems: 1
-  type: array
-  problems:
-  items:
-  anyOf:
-
-  * $ref: '#/components/schemas/BookingRecordProblem'
-
-  * type: string
-    description: Extensible enum
-    type: array
-    uniqueItems: true
-    record\_locator:
-    type: string
-    source\_reference:
-    type: string
-    synchronized\_at:
-    $ref: '#/components/schemas/UTCTime'
-    ticketing\_time\_limit:
-    $ref: '#/components/schemas/UTCTime'
-    voiding\_time\_limit:
-    $ref: '#/components/schemas/UTCTime'
-    required:
-
-* id
-
-* source\_reference
-
-* record\_locator
-
-* created\_at
-
-* can\_ticket
-
-* can\_cancel
-
-* can\_void
-
-* can\_refund
-
-* can\_exchange
-
-* can\_book\_seats
-
-* can\_modify\_pax
-
-* ticketing\_time\_limit
-
-* fare\_rule\_texts
-
-* flights
-
-* passengers
-
-* change\_scope
-
-* involuntary\_change\_scope
-
-* metadata
-
-* problems
-
-* synchronized\_at
-
-* follow\_up\_actions
-  type: object
-  BookingRequest:
-  properties:
-  agency\_fee:
-  multipleOf: 0.01
-  type: number
-  airline\_cc\_payment:
-  multipleOf: 0.01
-  type: number
-  allow\_duplicates:
-  type: boolean
-  digest:
-  type: string
-  email:
-  type: string
-  expected\_agent\_net\_price:
-  multipleOf: 0.01
-  type: number
-  external:
-  type: boolean
-  passengers:
-  items:
-  $ref: '#/components/schemas/Passenger\_Person'
-  minItems: 1
-  type: array
-  payment\_option:
-  $ref: '#/components/schemas/PaymentOption'
-  phone:
-  type: string
-  required:
-
-* digest
-
-* passengers
-
-* phone
-
-* payment\_option
-  type: object
-  BookingSource:
-  oneOf:
-
-* properties:
-  tag:
-  enum:
-
-  * amadeus
-    type: string
-    required:
-
-  * tag
-    title: BSAmadeus
-    type: object
-
-* properties:
-  airline:
-  type: string
-  tag:
-  enum:
-
-  * ndc\_direct
-    type: string
-    required:
-
-  * airline
-
-  * tag
-    title: BSNdcDirect
-    type: object
-
-* properties:
-  tag:
-  enum:
-
-  * ndc\_partner
-    type: string
-    required:
-
-  * tag
-    title: BSNdcPartner
-    type: object
+  schemas:
+    ActionResult:
+      properties:
+        finished_at:
+          $ref: '#/components/schemas/UTCTime'
+        result:
+          $ref: '#/components/schemas/ActionStatus'
+        started_at:
+          $ref: '#/components/schemas/UTCTime'
+        type:
+          $ref: '#/components/schemas/BookingRecordAction'
+      required:
+        - type
+        - started_at
+      type: object
+    ActionRule:
+      properties:
+        after_departure:
+          $ref: '#/components/schemas/SituationRule'
+        before_departure:
+          $ref: '#/components/schemas/SituationRule'
+        has_penalty:
+          type: boolean
+        is_permitted:
+          type: boolean
+        no_show:
+          $ref: '#/components/schemas/SituationRule'
+      required:
+        - is_permitted
+      type: object
+    ActionStatus:
+      enum:
+        - success
+        - recoverable_error
+        - non_recoverable_error
+      type: string
+    AdultPassenger_PassengerInfo:
+      properties:
+        adult:
+          $ref: '#/components/schemas/PassengerInfo'
+        infant:
+          $ref: '#/components/schemas/PassengerInfo'
+      required:
+        - adult
+      type: object
+    AdultPassenger_Person:
+      properties:
+        adult:
+          $ref: '#/components/schemas/Person'
+        infant:
+          $ref: '#/components/schemas/Person'
+      required:
+        - adult
+      type: object
+    AdvancedPricingDetails:
+      properties:
+        airline_allowed_cc_types:
+          items:
+            $ref: '#/components/schemas/CreditCardType'
+          type: array
+        fare_type:
+          $ref: '#/components/schemas/FareType'
+        max_agent_markup:
+          multipleOf: 0.01
+          type: number
+        source:
+          $ref: '#/components/schemas/SourceV2'
+        split_payment_allowed:
+          type: boolean
+      required:
+        - fare_type
+        - split_payment_allowed
+        - airline_allowed_cc_types
+        - source
+      type: object
+    Author:
+      properties:
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required:
+        - first_name
+        - last_name
+        - email
+      type: object
+    BRMetadata:
+      properties:
+        can_book_seats_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/BookSeatsContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_cancel_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/CancelContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_exchange_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/ChangeContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_modify_pax:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/ModifyPaxContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_refund_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/RefundContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_ticket_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/TicketContext'
+              - type: string
+            description: Extensible enum
+          type: array
+        can_void_context:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/VoidContext'
+              - type: string
+            description: Extensible enum
+          type: array
+      required:
+        - can_refund_context
+        - can_exchange_context
+        - can_void_context
+        - can_cancel_context
+        - can_ticket_context
+        - can_book_seats_context
+        - can_modify_pax
+      type: object
+    Baggage:
+      properties:
+        amount:
+          maximum: 9223372036854776000
+          minimum: -9223372036854776000
+          type: integer
+        unit:
+          $ref: '#/components/schemas/BaggageUnit'
+      required:
+        - amount
+        - unit
+      type: object
+    BaggageUnit:
+      enum:
+        - NumberOfPieces
+        - Kilograms
+        - Pounds
+      type: string
+    BonusCard:
+      properties:
+        card_number:
+          type: string
+        carrier_iata:
+          type: string
+      required:
+        - card_number
+        - carrier_iata
+      type: object
+    BookSeatsContext:
+      enum:
+        - source_not_supported
+        - not_supported_by_airline
+        - no_issued_tickets
+        - booking_record_has_problems
+      type: string
+    BookingError:
+      oneOf:
+        - $ref: '#/components/schemas/BookingFailed'
+        - $ref: '#/components/schemas/PriceChanged'
+    BookingFailed:
+      properties:
+        message:
+          type: string
+        reason:
+          enum:
+            - failed
+          type: string
+      required:
+        - message
+        - reason
+      type: object
+    BookingRecordAction:
+      enum:
+        - book
+        - cancel
+        - issue
+        - book_seats
+        - exchange
+        - void
+        - refund
+      type: string
+    BookingRecordProblem:
+      enum:
+        - airline_interruption
+        - disrupted
+        - manual_update
+        - involuntary_cancellation
+        - passengers_mismatch
+        - last_action_support_required
+      type: string
+    BookingRecordV2:
+      properties:
+        airline_record_locator:
+          type: string
+        can_book_seats:
+          type: boolean
+        can_cancel:
+          type: boolean
+        can_exchange:
+          type: boolean
+        can_modify_pax:
+          type: boolean
+        can_refund:
+          type: boolean
+        can_ticket:
+          type: boolean
+        can_void:
+          type: boolean
+        change_scope:
+          $ref: '#/components/schemas/ChangeScope'
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        fare_price_guarantee_time_limit:
+          $ref: '#/components/schemas/UTCTime'
+        fare_rule_texts:
+          additionalProperties:
+            type: string
+          type: object
+        fare_rules:
+          $ref: '#/components/schemas/FareRules'
+        flights:
+          items:
+            $ref: '#/components/schemas/FlightWithPriceClass_PriceClass_FlightSegmentV2'
+          minItems: 1
+          type: array
+        follow_up_actions:
+          items:
+            $ref: '#/components/schemas/FollowUpAction'
+          type: array
+          uniqueItems: true
+        id:
+          $ref: '#/components/schemas/UUID'
+        involuntary_change_scope:
+          $ref: '#/components/schemas/ChangeScope'
+        last_action:
+          $ref: '#/components/schemas/ActionResult'
+        metadata:
+          $ref: '#/components/schemas/BRMetadata'
+        passengers:
+          items:
+            $ref: '#/components/schemas/Passenger_PassengerInfo'
+          minItems: 1
+          type: array
+        problems:
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/BookingRecordProblem'
+              - type: string
+            description: Extensible enum
+          type: array
+          uniqueItems: true
+        record_locator:
+          type: string
+        source_reference:
+          type: string
+        synchronized_at:
+          $ref: '#/components/schemas/UTCTime'
+        ticketing_time_limit:
+          $ref: '#/components/schemas/UTCTime'
+        voiding_time_limit:
+          $ref: '#/components/schemas/UTCTime'
+      required:
+        - id
+        - source_reference
+        - record_locator
+        - created_at
+        - can_ticket
+        - can_cancel
+        - can_void
+        - can_refund
+        - can_exchange
+        - can_book_seats
+        - can_modify_pax
+        - ticketing_time_limit
+        - fare_rule_texts
+        - flights
+        - passengers
+        - change_scope
+        - involuntary_change_scope
+        - metadata
+        - problems
+        - synchronized_at
+        - follow_up_actions
+      type: object
+    BookingRequest:
+      properties:
+        agency_fee:
+          multipleOf: 0.01
+          type: number
+        airline_cc_payment:
+          multipleOf: 0.01
+          type: number
+        allow_duplicates:
+          type: boolean
+        digest:
+          type: string
+        email:
+          type: string
+        expected_agent_net_price:
+          multipleOf: 0.01
+          type: number
+        external:
+          type: boolean
+        passengers:
+          items:
+            $ref: '#/components/schemas/Passenger_Person'
+          minItems: 1
+          type: array
+        payment_option:
+          $ref: '#/components/schemas/PaymentOption'
+        phone:
+          type: string
+      required:
+        - digest
+        - passengers
+        - phone
+        - payment_option
+      type: object
+    BookingSource:
+      oneOf:
+        - properties:
+            tag:
+              enum:
+                - amadeus
+              type: string
+          required:
+            - tag
+          title: BSAmadeus
+          type: object
+        - properties:
+            airline:
+              type: string
+            tag:
+              enum:
+                - ndc_direct
+              type: string
+          required:
+            - airline
+            - tag
+          title: BSNdcDirect
+          type: object
+        - properties:
+            tag:
+              enum:
+                - ndc_partner
+              type: string
+          required:
+            - tag
+          title: BSNdcPartner
+          type: object
     CabinClass:
-    enum:
-
-* economy
-
-* premium
-
-* business
-
-* first
-  type: string
-  CancelContext:
-  enum:
-
-* not\_all\_tickets\_eligible
-
-* booking\_record\_has\_problems
-  type: string
-  ChangeContext:
-  enum:
-
-* source\_not\_supported
-
-* no\_issued\_tickets
-
-* tickets\_expired
-
-* nothing\_to\_change
-
-* not\_homogenous
-
-* blocked\_by\_check\_in\_process
-
-* blocked\_by\_fare\_rules
-
-* booking\_record\_has\_problems
-  type: string
-  ChangeScope:
-  properties:
-  flights:
-  items:
-  $ref: '#/components/schemas/FlightChangeOptions'
-  type: array
-  required:
-
-* flights
-  type: object
-  ChildPassenger\_PassengerInfo:
-  properties:
-  child:
-  $ref: '#/components/schemas/PassengerInfo'
-  required:
-
-* child
-  type: object
-  ChildPassenger\_Person:
-  properties:
-  child:
-  $ref: '#/components/schemas/Person'
-  required:
-
-* child
-  type: object
-  ConfirmPriceChangeRequest:
-  properties:
-  expected\_agent\_net\_price:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* expected\_agent\_net\_price
-  type: object
-  CouponStatus:
-  enum:
-
-* open
-
-* checked\_in
-
-* exchanged
-
-* used
-
-* refunded
-
-* voided
-
-* blocked
-  type: string
-  CreateOrderComment:
-  properties:
-  comment:
-  type: string
-  order\_id:
-  $ref: '#/components/schemas/UUID'
-  required:
-
-* order\_id
-
-* comment
-  type: object
-  CreditCard:
-  properties:
-  expiration\_date:
-  type: string
-  holder\_name:
-  type: string
-  number:
-  type: string
-  security:
-  type: string
-  zip\_code:
-  type: string
-  required:
-
-* number
-
-* holder\_name
-
-* expiration\_date
-  type: object
-  CreditCardType:
-  enum:
-
-* visa
-
-* mastercard
-
-* american\_express
-
-* diners\_club
-
-* discover
-
-* jcb
-
-* unionpay
-  type: string
-  CurrencyCode:
-  enum:
-
-* USD
-  example: USD
-  type: string
-  Day:
-  example: '2016-07-22'
-  format: date
-  type: string
-  Editor:
-  properties:
-  email:
-  type: string
-  first\_name:
-  type: string
-  last\_name:
-  type: string
-  timestamp:
-  $ref: '#/components/schemas/UTCTime'
-  required:
-
-* first\_name
-
-* last\_name
-
-* email
-
-* timestamp
-  type: object
-
-ExchangedTicket:
-properties:
-exchanged\_at:
-$ref: '#/components/schemas/UTCTime'
-id:
-$ref: '#/components/schemas/UUID'
-ticket\_number:
-type: string
-required:
-
-* id
-
-* ticket\_number
-
-* exchanged\_at
-  type: object
-  FareRules:
-  properties:
-  adult:
-  $ref: '#/components/schemas/PaxTypeRules'
-  child:
-  $ref: '#/components/schemas/PaxTypeRules'
-  fare\_bases:
-  items:
-  type: string
-  minItems: 1
-  type: array
-  infant:
-  $ref: '#/components/schemas/PaxTypeRules'
-  required:
-
-* adult
-
-* fare\_bases
-  type: object
-  FareType:
-  enum:
-
-* published
-
-* nego
-
-* web
-  type: string
-  FlightAirport:
-  properties:
-  iata:
-  type: string
-  name:
-  type: string
-  required:
-
-* iata
-
-* name
-  type: object
-  FlightCarrier:
-  properties:
-  iata:
-  type: string
-  name:
-  type: string
-  uuid:
-  $ref: '#/components/schemas/UUID'
-  required:
-
-* iata
-
-* uuid
-
-* name
-  type: object
-  FlightChangeOptions:
-  properties:
-  can\_change\_cabin:
-  type: boolean
-  can\_change\_departure\_date:
-  type: boolean
-  can\_change\_departure\_point:
-  type: boolean
-  can\_change\_destination\_point:
-  type: boolean
-  index:
-  maximum: 9223372036854776000
-  minimum: -9223372036854776000
-  type: integer
-  required:
-
-* index
-
-* can\_change\_departure\_point
-
-* can\_change\_departure\_date
-
-* can\_change\_destination\_point
-
-* can\_change\_cabin
-  type: object
-  FlightCity:
-  properties:
-  country:
-  type: string
-  iata:
-  type: string
-  name:
-  type: string
-  required:
-
-* iata
-
-* name
-
-* country
-  type: object
-  FlightCoupon:
-  properties:
-  code:
-  type: string
-  status:
-  anyOf:
-
-  * $ref: '#/components/schemas/CouponStatus'
-
-  * type: string
-    description: Extensible enum
-    required:
-
-* status
-  type: object
-  FlightSearchRequestV2:
-  properties:
-  cabin:
-  $ref: '#/components/schemas/MultipleChoiceFilter\_CabinClass'
-  carriers:
-  $ref: '#/components/schemas/MultipleChoiceFilter\_IataCode'
-  exclude\_basic\_economy:
-  type: boolean
-  fare\_types:
-  $ref: '#/components/schemas/MultipleChoiceFilter\_FareType'
-  fast\_search:
-  type: boolean
-  flights:
-  items:
-  $ref: '#/components/schemas/SearchSegment'
-  minItems: 1
-  type: array
-  include\_details:
-  items:
-  $ref: '#/components/schemas/IncludeDetails'
-  type: array
-  passengers:
-  $ref: '#/components/schemas/SearchPassengers'
-  sources:
-  $ref: '#/components/schemas/MultipleChoiceFilter\_SourceV2'
-  required:
-
-* flights
-
-* passengers
-  type: object
-  FlightSearchResponseV2:
-  properties:
-  flight\_segments:
-  items:
-  $ref: '#/components/schemas/FlightSegmentV2'
-  type: array
-  offers:
-  items:
-  $ref: '#/components/schemas/OfferV2'
-  type: array
-  price\_classes:
-  items:
-  $ref: '#/components/schemas/PriceClass'
-  type: array
-  required:
-
-* offers
-
-* flight\_segments
-
-* price\_classes
-  type: object
-  FlightSegmentPoint:
-  properties:
-  city:
-  type: string
-  iata:
-  type: string
-  terminal:
-  type: string
-  timestamp:
-  $ref: '#/components/schemas/ZonedTime'
-  required:
-
-* city
-
-* iata
-
-* timestamp
-  type: object
-  FlightSegmentStatus:
-  enum:
-
-* confirmed
-
-* awaiting\_confirmation
-
-* inactive
-  type: string
-  FlightSegmentV2:
-  properties:
-  arrival\_point:
-  $ref: '#/components/schemas/FlightSegmentPoint'
-  booking\_class:
-  example: '?'
-  maxLength: 1
-  minLength: 1
-  type: string
-  cabin:
-  $ref: '#/components/schemas/CabinClass'
-  confirmation\_number:
-  type: string
-  departure\_point:
-  $ref: '#/components/schemas/FlightSegmentPoint'
-  flight\_code:
-  type: string
-  marketing\_carrier:
-  $ref: '#/components/schemas/FlightCarrier'
-  operating\_carrier:
-  $ref: '#/components/schemas/FlightCarrier'
-  technical\_stops:
-  items:
-  $ref: '#/components/schemas/TechnicalStop'
-  type: array
-  vehicle:
-  $ref: '#/components/schemas/Vehicle'
-  required:
-
-* departure\_point
-
-* arrival\_point
-
-* technical\_stops
-
-* booking\_class
-
-* cabin
-
-* vehicle
-
-* baggage
-
-* flight\_code
-
-* marketing\_carrier
-
-* operating\_carrier
-  type: object
-  FlightWithPriceClass\_PriceClassIndex\_FlightSegmentIndex:
-  properties:
-  fare\_rules:
-  $ref: '#/components/schemas/FareRules'
-  price\_class:
-  exclusiveMinimum: false
-  maximum: 9223372036854776000
-  minimum: 0
-  type: integer
-  segments:
-  items:
-  exclusiveMinimum: false
-  maximum: 9223372036854776000
-  minimum: 0
-  type: integer
-  minItems: 1
-  type: array
-  required:
-
-* segments
-  type: object
-  FlightWithPriceClass\_PriceClass\_FlightSegmentV2:
-  properties:
-  fare\_rules:
-  $ref: '#/components/schemas/FareRules'
-  price\_class:
-  $ref: '#/components/schemas/PriceClass'
-  segments:
-  items:
-  $ref: '#/components/schemas/FlightSegmentV2'
-  minItems: 1
-  type: array
-  required:
-
-* segments
-  type: object
-  FollowUpAction:
-  enum:
-
-* involuntary\_refund
-
-* involuntary\_exchange
-
-* confirm\_involuntary\_changes
-
-* contact\_support
-  type: string
-  IdentityCardDocument:
-  properties:
-  expires\_at:
-  $ref: '#/components/schemas/Day'
-  issuing\_country:
-  type: string
-  number:
-  type: string
-  required:
-
-* number
-
-* expires\_at
-
-* issuing\_country
-  type: object
-  IncludeDetails:
-  enum:
-
-* taxes\_per\_pax
-  type: string
-  ModifyPaxContext:
-  enum:
-
-* source\_not\_supported
-
-* not\_all\_tickets\_eligble
-
-* unissued\_order\_modify\_not\_recommended
-  type: string
-  MultipleChoiceFilter\_CabinClass:
-  oneOf:
-
-* enum:
-
-  * any
-    title: Any
-    type: string
-
-* items:
-  $ref: '#/components/schemas/CabinClass'
-  minItems: 1
-  title: OneOf
-  type: array
-  MultipleChoiceFilter\_FareType:
-  oneOf:
-
-* enum:
-
-  * any
-    title: Any
-    type: string
-
-* items:
-  $ref: '#/components/schemas/FareType'
-  minItems: 1
-  title: OneOf
-  type: array
-  MultipleChoiceFilter\_IataCode:
-  oneOf:
-
-* enum:
-
-  * any
-    title: Any
-    type: string
-
-* items:
-  type: string
-  minItems: 1
-  title: OneOf
-  type: array
-  MultipleChoiceFilter\_SourceV2:
-  oneOf:
-
-* enum:
-
-  * any
-    title: Any
-    type: string
-
-* items:
-  $ref: '#/components/schemas/SourceV2'
-  minItems: 1
-  title: OneOf
-  type: array
-  OfferV2:
-  properties:
-  alliance:
-  type: string
-  basic\_economy:
-  type: boolean
-  date\_of\_birth\_required:
-  type: boolean
-  digest:
-  type: string
-  expires\_at:
-  $ref: '#/components/schemas/UTCTime'
-  fare\_rules:
-  $ref: '#/components/schemas/FareRules'
-  flights:
-  items:
-  $ref: '#/components/schemas/FlightWithPriceClass\_PriceClassIndex\_FlightSegmentIndex'
-  minItems: 1
-  type: array
-  price:
-  $ref: '#/components/schemas/PricingInfoV2'
-  travel\_document\_required:
-  type: boolean
-  validating\_carrier:
-  $ref: '#/components/schemas/FlightCarrier'
-  required:
-
-* flights
-
-* basic\_economy
-
-* validating\_carrier
-
-* price
-
-* digest
-
-* travel\_document\_required
-
-* date\_of\_birth\_required
-  type: object
-  OrderComment:
-  properties:
-  author:
-  $ref: '#/components/schemas/Author'
-  comment:
-  type: string
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  editors:
-  items:
-  $ref: '#/components/schemas/Editor'
-  type: array
-  id:
-  $ref: '#/components/schemas/UUID'
-  required:
-
-* id
-
-* comment
-
-* author
-
-* editors
-
-* created\_at
-  type: object
-  OrderV2:
-  properties:
-  agency\_id:
-  $ref: '#/components/schemas/UUID'
-  agent\_id:
-  $ref: '#/components/schemas/UUID'
-  booking\_records:
-  items:
-  $ref: '#/components/schemas/BookingRecordV2'
-  minItems: 1
-  type: array
-  booking\_source:
-  $ref: '#/components/schemas/BookingSource'
-  consortium\_id:
-  $ref: '#/components/schemas/UUID'
-  contact\_email:
-  type: string
-  contact\_phone:
-  type: string
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  id:
-  $ref: '#/components/schemas/UUID'
-  is\_external:
-  type: boolean
-  payments:
-  items:
-  $ref: '#/components/schemas/Payment'
-  type: array
-  queue\_host\_id:
-  type: string
-  readable\_id:
-  type: integer
-  refund\_invoices:
-  items:
-  $ref: '#/components/schemas/RefundInvoice'
-  type: array
-  sell\_invoices:
-  items:
-  $ref: '#/components/schemas/SellInvoice'
-  type: array
-  temporary:
-  type: boolean
-  updated\_at:
-  $ref: '#/components/schemas/UTCTime'
-  validating\_carrier:
-  $ref: '#/components/schemas/FlightCarrier'
-  required:
-
-* id
-
-* agent\_id
-
-* agency\_id
-
-* readable\_id
-
-* is\_external
-
-* contact\_phone
-
-* contact\_email
-
-* booking\_source
-
-* validating\_carrier
-
-* booking\_records
-
-* created\_at
-
-* updated\_at
-
-* sell\_invoices
-
-* refund\_invoices
-
-* payments
-
-* temporary
-  type: object
-  PassengerInfo:
-  properties:
-  air\_ticket:
-  $ref: '#/components/schemas/TicketV2'
-  birthdate:
-  $ref: '#/components/schemas/Day'
-  bonus\_card:
-  $ref: '#/components/schemas/BonusCard'
-  bonus\_cards:
-  items:
-  $ref: '#/components/schemas/BonusCard'
-  type: array
-  exchanged\_tickets:
-  items:
-  $ref: '#/components/schemas/ExchangedTicket'
-  type: array
-  id:
-  $ref: '#/components/schemas/UUID'
-  identity\_cards:
-  items:
-  $ref: '#/components/schemas/IdentityCardDocument'
-  type: array
-  ktn:
-  type: string
-  middle\_name:
-  type: string
-  name:
-  type: string
-  nationality:
-  type: string
-  passports:
-  items:
-  $ref: '#/components/schemas/PassportDocument'
-  type: array
-  sex:
-  $ref: '#/components/schemas/Sex'
-  surname:
-  type: string
-  travel\_document:
-  $ref: '#/components/schemas/TravelDocument'
-  required:
-
-* id
-
-* name
-
-* surname
-
-* passports
-
-* identity\_cards
-
-* bonus\_cards
-
-* sex
-
-* nationality
-
-* air\_ticket
-
-* exchanged\_tickets
-  type: object
-  Passenger\_PassengerInfo:
-  oneOf:
-
-* $ref: '#/components/schemas/AdultPassenger\_PassengerInfo'
-
-* $ref: '#/components/schemas/ChildPassenger\_PassengerInfo'
-  Passenger\_Person:
-  oneOf:
-
-* $ref: '#/components/schemas/AdultPassenger\_Person'
-
-* $ref: '#/components/schemas/ChildPassenger\_Person'
-  PassportDocument:
-  properties:
-  expires\_at:
-  $ref: '#/components/schemas/Day'
-  issuing\_country:
-  type: string
-  number:
-  type: string
-  required:
-
-* number
-
-* expires\_at
-
-* issuing\_country
-  type: object
-  PaxSegmentV2:
-  properties:
-  flight\_coupon:
-  $ref: '#/components/schemas/FlightCoupon'
-  seats:
-  items:
-  $ref: '#/components/schemas/Seat'
-  type: array
-  status:
-  anyOf:
-
-  * $ref: '#/components/schemas/FlightSegmentStatus'
-
-  * type: string
-    description: Extensible enum
-    required:
-
-* seats
-
-* status
-  type: object
-  PaxTypeRules:
-  properties:
-  change:
-  $ref: '#/components/schemas/ActionRule'
-  refund:
-  $ref: '#/components/schemas/ActionRule'
-  type: object
-  Payment:
-  properties:
-  amount:
-  multipleOf: 0.01
-  type: number
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  currency\_code:
-  $ref: '#/components/schemas/CurrencyCode'
-  id:
-  $ref: '#/components/schemas/UUID'
-  invoice\_id:
-  $ref: '#/components/schemas/UUID'
-  pan\_cc:
-  type: string
-  parent\_payment\_id:
-  $ref: '#/components/schemas/UUID'
-  status:
-  $ref: '#/components/schemas/PaymentStatus'
-  status\_updated\_at:
-  $ref: '#/components/schemas/UTCTime'
-  type:
-  $ref: '#/components/schemas/PaymentType'
-  required:
-
-* id
-
-* invoice\_id
-
-* created\_at
-
-* type
-
-* currency\_code
-
-* amount
-
-* status
-
-* status\_updated\_at
-  type: object
-  PaymentOption:
-  enum:
-
-* passenger\_cc
-
-* agent\_cash
-
-* passenger\_cc\_single\_payment
-
-* custom
-  type: string
-  PaymentStatus:
-  enum:
-
-* processing
-
-* rejected
-
-* authorized
-
-* charged
-
-* issued
-
-* canceled
-  type: string
-  PaymentType:
-  enum:
-
-* merchant\_charge
-
-* check\_to\_agency
-
-* agency\_charge
-
-* check\_from\_agency
-
-* merchant\_refund
-
-* refund\_check\_from\_agency
-
-* agency\_refund
-
-* refund\_check\_to\_agency
-
-* vendor\_charge
-
-* vendor\_refund
-  type: string
-  PenaltyFee:
-  properties:
-  amount:
-  multipleOf: 0.001
-  type: number
-  currency:
-  type: string
-  required:
-
-* currency
-
-* amount
-  type: object
-  PerPaxPrice\_MoneyUSD:
-  properties:
-  adult:
-  multipleOf: 0.01
-  type: number
-  child:
-  multipleOf: 0.01
-  type: number
-  infant:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* adult
-  type: object
-  PerPaxPrice\_TaxWithBreakdown:
-  properties:
-  adult:
-  $ref: '#/components/schemas/TaxWithBreakdown'
-  child:
-  $ref: '#/components/schemas/TaxWithBreakdown'
-  infant:
-  $ref: '#/components/schemas/TaxWithBreakdown'
-  required:
-
-* adult
-  type: object
-  Person:
-  properties:
-  birthday:
-  $ref: '#/components/schemas/Day'
-  bonus\_card:
-  $ref: '#/components/schemas/BonusCard'
-  first\_name:
-  type: string
-  last\_name:
-  type: string
-  middle\_name:
-  type: string
-  nationality:
-  type: string
-  sex:
-  $ref: '#/components/schemas/Sex'
-  travel\_document:
-  $ref: '#/components/schemas/TravelDocument'
-  required:
-
-* first\_name
-
-* last\_name
-
-* nationality
-
-* birthday
-
-* sex
-  type: object
-  PreliminaryRequest:
-  properties:
-  agency\_fee:
-  multipleOf: 0.01
-  type: number
-  airline\_cc\_payment:
-  multipleOf: 0.01
-  type: number
-  digest:
-  type: string
-  run\_upsell:
-  type: boolean
-  required:
-
-* digest
-
-* run\_upsell
-  type: object
-  PreliminaryResponseV2:
-  properties:
-  fare\_rule\_texts:
-  additionalProperties:
-  type: string
-  type: object
-  flight\_segments:
-  items:
-  $ref: '#/components/schemas/FlightSegmentV2'
-  type: array
-  offers:
-  items:
-  $ref: '#/components/schemas/OfferV2'
-  minItems: 1
-  type: array
-  price\_classes:
-  items:
-  $ref: '#/components/schemas/PriceClass'
-  type: array
-  required:
-
-* offers
-
-* flight\_segments
-
-* fare\_rule\_texts
-
-* price\_classes
-  type: object
-  PriceChanged:
-  properties:
-  message:
-  type: string
-  order\_id:
-  $ref: '#/components/schemas/UUID'
-  pricing:
-  $ref: '#/components/schemas/PricingInfoV2'
-  reason:
-  enum:
-
-  * price\_changed
-    type: string
-    required:
-
-* message
-
-* pricing
-
-* order\_id
-
-* reason
-  type: object
-  PriceClass:
-  properties:
-  code:
-  type: string
-  descriptions:
-  items:
-  type: string
-  type: array
-  name:
-  type: string
-  required:
-
-* name
-
-* descriptions
-  type: object
-  PricingCC:
-  properties:
-  agency\_cash\_payment:
-  multipleOf: 0.01
-  type: number
-  agent\_net\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  agent\_net\_total:
-  multipleOf: 0.01
-  type: number
-  agent\_service\_fee:
-  multipleOf: 0.01
-  type: number
-  airline\_agent\_markup:
-  multipleOf: 0.01
-  type: number
-  airline\_cc\_payment:
-  multipleOf: 0.01
-  type: number
-  allowed\_cc\_types:
-  items:
-  $ref: '#/components/schemas/CreditCardType'
-  type: array
-  cc\_transaction\_fee:
-  multipleOf: 0.01
-  type: number
-  merchant\_cc\_payment:
-  multipleOf: 0.01
-  type: number
-  passenger\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  passenger\_total:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* allowed\_cc\_types
-
-* agent\_net\_total
-
-* agent\_net\_per\_pax
-
-* airline\_cc\_payment
-
-* merchant\_cc\_payment
-
-* agency\_cash\_payment
-
-* passenger\_total
-
-* passenger\_per\_pax
-
-* airline\_agent\_markup
-
-* agent\_service\_fee
-
-* cc\_transaction\_fee
-  type: object
-  PricingCash:
-  properties:
-  agency\_cash\_payment:
-  multipleOf: 0.01
-  type: number
-  agent\_net\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  agent\_net\_total:
-  multipleOf: 0.01
-  type: number
-  agent\_service\_fee:
-  multipleOf: 0.01
-  type: number
-  passenger\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  passenger\_total:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* agent\_net\_total
-
-* agent\_net\_per\_pax
-
-* agency\_cash\_payment
-
-* passenger\_total
-
-* passenger\_per\_pax
-
-* agent\_service\_fee
-  type: object
-  PricingCustom:
-  properties:
-  agency\_cash\_payment:
-  multipleOf: 0.01
-  type: number
-  agent\_net\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  agent\_net\_total:
-  multipleOf: 0.01
-  type: number
-  agent\_service\_fee:
-  multipleOf: 0.01
-  type: number
-  passenger\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  passenger\_total:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* agent\_net\_total
-
-* agent\_net\_per\_pax
-
-* agency\_cash\_payment
-
-* passenger\_total
-
-* passenger\_per\_pax
-
-* agent\_service\_fee
-  type: object
-  PricingInfoV2:
-  properties:
-  advanced\_pricing\_details:
-  $ref: '#/components/schemas/AdvancedPricingDetails'
-  agent\_commission:
-  multipleOf: 0.01
-  type: number
-  agent\_extra\_fee:
-  multipleOf: 0.01
-  type: number
-  agent\_preset\_fee:
-  multipleOf: 0.01
-  type: number
-  airline\_base\_fare:
-  multipleOf: 0.01
-  type: number
-  airline\_base\_fare\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_MoneyUSD'
-  airline\_taxes:
-  multipleOf: 0.01
-  type: number
-  airline\_taxes\_per\_pax:
-  $ref: '#/components/schemas/PerPaxPrice\_TaxWithBreakdown'
-  airline\_total:
-  multipleOf: 0.01
-  type: number
-  consolidator\_discount:
-  multipleOf: 0.01
-  type: number
-  consolidator\_fee:
-  multipleOf: 0.01
-  type: number
-  currency\_code:
-  $ref: '#/components/schemas/CurrencyCode'
-  penalty:
-  multipleOf: 0.01
-  type: number
-  pricing\_options:
-  $ref: '#/components/schemas/PricingOptions'
-  required:
-
-* currency\_code
-
-* airline\_base\_fare
-
-* airline\_base\_fare\_per\_pax
-
-* airline\_taxes
-
-* airline\_total
-
-* consolidator\_fee
-
-* consolidator\_discount
-
-* agent\_commission
-
-* agent\_preset\_fee
-
-* agent\_extra\_fee
-
-* pricing\_options
-
-* advanced\_pricing\_details
-  type: object
-  PricingOptions:
-  properties:
-  agent\_cash:
-  $ref: '#/components/schemas/PricingCash'
-  custom:
-  $ref: '#/components/schemas/PricingCustom'
-  passenger\_cc:
-  $ref: '#/components/schemas/PricingCC'
-  passenger\_cc\_single\_payment:
-  $ref: '#/components/schemas/PricingCC'
-  type: object
-  ProductStatus:
-  enum:
-
-* booked
-
-* processing\_cancel
-
-* failed\_cancel
-
-* canceled
-
-* processing\_issue
-
-* failed\_issue
-
-* terminated\_issue
-
-* issued
-
-* processing\_void
-
-* failed\_void
-
-* voided
-
-* processing\_exchange
-
-* exchanged
-
-* refunded
-
-* failed\_exchange
-
-* terminated\_refund
-
-* processing\_refund
-
-* failed\_refund
-  type: string
-  RefundComponents:
-  properties:
-  tickets:
-  items:
-  $ref: '#/components/schemas/RefundItem'
-  type: array
-  required:
-
-* tickets
-  type: object
-  RefundContext:
-  enum:
-
-* source\_not\_supported
-
-* not\_all\_tickets\_eligible
-
-* not\_homogeneous
-
-* inappropriate\_coupons\_statuses
-
-* tickets\_expired
-
-* blocked\_by\_fare\_rules
-
-* booking\_record\_has\_problems
-  type: string
-  RefundError:
-  oneOf:
-
-* $ref: '#/components/schemas/RefundTimeLimit'
-
-* $ref: '#/components/schemas/RefundNDCError'
-  RefundInput:
-  properties:
-  id:
-  type: string
-  required:
-
-* id
-  type: object
-  RefundInvoice:
-  properties:
-  components:
-  $ref: '#/components/schemas/RefundComponents'
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  currency\_code:
-  $ref: '#/components/schemas/CurrencyCode'
-  id:
-  $ref: '#/components/schemas/UUID'
-  required:
-
-* id
-
-* created\_at
-
-* currency\_code
-
-* components
-  type: object
-  RefundItem:
-  properties:
-  agent\_extra\_fee\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  agent\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  airline\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  fare\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  id:
-  $ref: '#/components/schemas/UUID'
-  passenger\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  payment\_fee\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  penalty:
-  multipleOf: 0.01
-  type: number
-  recall\_agent\_commission:
-  multipleOf: 0.01
-  type: number
-  recall\_agent\_extra\_fee:
-  multipleOf: 0.01
-  type: number
-  recall\_consolidator\_discount:
-  multipleOf: 0.01
-  type: number
-  taxes\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* id
-
-* fare\_to\_refund
-
-* taxes\_to\_refund
-
-* penalty
-
-* recall\_consolidator\_discount
-
-* recall\_agent\_commission
-
-* recall\_agent\_extra\_fee
-
-* agent\_extra\_fee\_to\_refund
-
-* payment\_fee\_to\_refund
-
-* airline\_total\_to\_refund
-
-* agent\_total\_to\_refund
-
-* passenger\_total\_to\_refund
-  type: object
-  RefundNDCError:
-  properties:
-  message:
-  type: string
-  reason:
-  enum:
-
-  * ndc\_error
-    type: string
-    ui\_error:
-    type: string
-    required:
-
-* message
-
-* reason
-
-* ui\_error
-  type: object
-  RefundOffer:
-  properties:
-  id:
-  type: string
-  pricing:
-  $ref: '#/components/schemas/RefundPricing'
-  time\_limit:
-  $ref: '#/components/schemas/UTCTime'
-  required:
-
-* id
-
-* pricing
-  type: object
-  RefundOfferError:
-  properties:
-  message:
-  type: string
-  reason:
-  enum:
-
-  * should\_void
-    type: string
-    required:
-
-* reason
-
-* message
-  type: object
-  RefundPricing:
-  properties:
-  agent\_extra\_fee\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  agent\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  airline\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  fare\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  passenger\_total\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  payment\_fee\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  penalty:
-  multipleOf: 0.01
-  type: number
-  recall\_agent\_commission:
-  multipleOf: 0.01
-  type: number
-  recall\_agent\_extra\_fee:
-  multipleOf: 0.01
-  type: number
-  recall\_consolidator\_discount:
-  multipleOf: 0.01
-  type: number
-  taxes\_to\_refund:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* fare\_to\_refund
-
-* taxes\_to\_refund
-
-* penalty
-
-* recall\_consolidator\_discount
-
-* recall\_agent\_commission
-
-* recall\_agent\_extra\_fee
-
-* agent\_extra\_fee\_to\_refund
-
-* payment\_fee\_to\_refund
-
-* airline\_total\_to\_refund
-
-* agent\_total\_to\_refund
-
-* passenger\_total\_to\_refund
-  type: object
-  RefundStatus:
-  properties:
-  offer:
-  $ref: '#/components/schemas/RefundOffer'
-  required:
-
-* offer
-  type: object
-  RefundTimeLimit:
-  properties:
-  message:
-  type: string
-  reason:
-  enum:
-
-  * time\_limit\_over
-    type: string
-    required:
-
-* message
-
-* reason
-  type: object
-  SearchPassengers:
-  description: 'Additional restrictions: total number of passengers not greater 8, number of infants not greater number of adults'
-  properties:
-  adults:
-  exclusiveMaximum: false
-  exclusiveMinimum: false
-  maximum: 8
-  minimum: 1
-  type: integer
-  children:
-  exclusiveMaximum: false
-  exclusiveMinimum: false
-  maximum: 7
-  minimum: 0
-  type: integer
-  infants:
-  exclusiveMaximum: false
-  exclusiveMinimum: false
-  maximum: 4
-  minimum: 0
-  type: integer
-  required:
-
-* adults
-
-* children
-
-* infants
-  type: object
-  SearchSegment:
-  properties:
-  date:
-  $ref: '#/components/schemas/Day'
-  from:
-  type: string
-  to:
-  type: string
-  required:
-
-* from
-
-* to
-
-* date
-  type: object
-  Seat:
-  properties:
-  column:
-  type: string
-  emd\_number:
-  type: string
-  id:
-  $ref: '#/components/schemas/UUID'
-  row:
-  maximum: 9223372036854776000
-  minimum: -9223372036854776000
-  type: integer
-  status:
-  $ref: '#/components/schemas/ProductStatus'
-  status\_updated\_at:
-  $ref: '#/components/schemas/UTCTime'
-  required:
-
-* id
-
-* status
-
-* status\_updated\_at
-
-* row
-
-* column
-  type: object
-  SellComponent:
-  properties:
-  agent\_extra\_fee:
-  multipleOf: 0.01
-  type: number
-  fare\_type:
-  $ref: '#/components/schemas/FareType'
-  items:
-  items:
-  $ref: '#/components/schemas/SellItem'
-  minItems: 1
-  type: array
-  required:
-
-* agent\_extra\_fee
-
-* items
-  type: object
-  SellComponents:
-  anyOf:
-
-* properties:
-  tickets:
-  minItems: 1
-  type: array
-
-* properties:
-  seats:
-  minItems: 1
-  type: array
-  properties:
-  seats:
-  items:
-  $ref: '#/components/schemas/SellComponent'
-  type: array
-  tickets:
-  items:
-  $ref: '#/components/schemas/SellComponent'
-  type: array
-  required:
-
-* tickets
-
-* seats
-  type: object
-  SellInvoice:
-  properties:
-  components:
-  $ref: '#/components/schemas/SellComponents'
-  created\_at:
-  $ref: '#/components/schemas/UTCTime'
-  currency\_code:
-  $ref: '#/components/schemas/CurrencyCode'
-  id:
-  $ref: '#/components/schemas/UUID'
-  merchant\_cc\_payment\_fee:
-  multipleOf: 0.01
-  type: number
-  pricing\_option:
-  $ref: '#/components/schemas/PaymentOption'
-  required:
-
-* id
-
-* created\_at
-
-* pricing\_option
-
-* currency\_code
-
-* merchant\_cc\_payment\_fee
-
-* components
-  type: object
-  SellItem:
-  properties:
-  agent\_commission:
-  multipleOf: 0.01
-  type: number
-  agent\_net\_total:
-  multipleOf: 0.01
-  type: number
-  airline\_base\_fare:
-  multipleOf: 0.01
-  type: number
-  airline\_taxes:
-  multipleOf: 0.01
-  type: number
-  airline\_total:
-  multipleOf: 0.01
-  type: number
-  consolidator\_discount:
-  multipleOf: 0.01
-  type: number
-  consolidator\_fee:
-  multipleOf: 0.01
-  type: number
-  id:
-  $ref: '#/components/schemas/UUID'
-  passenger\_total:
-  multipleOf: 0.01
-  type: number
-  penalty:
-  multipleOf: 0.01
-  type: number
-  required:
-
-* id
-
-* airline\_base\_fare
-
-* airline\_taxes
-
-* consolidator\_fee
-
-* consolidator\_discount
-
-* agent\_commission
-
-* agent\_net\_total
-
-* passenger\_total
-
-* airline\_total
-  type: object
-  Sex:
-  enum:
-
-* male
-
-* female
-  type: string
-  SituationRule:
-  properties:
-  is\_permitted:
-  type: boolean
-  max\_penalty:
-  $ref: '#/components/schemas/PenaltyFee'
-  min\_penalty:
-  $ref: '#/components/schemas/PenaltyFee'
-  required:
-
-* is\_permitted
-  type: object
-  SourceV2:
-  enum:
-
-* amadeus
-
-* ndc\_direct
-
-* ndc\_partner
-  type: string
-  TaxBreakdownItem:
-  properties:
-  amount:
-  multipleOf: 0.01
-  type: number
-  code:
-  type: string
-  description:
-  type: string
-  required:
-
-* code
-
-* amount
-  type: object
-  TaxWithBreakdown:
-  properties:
-  amount:
-  multipleOf: 0.01
-  type: number
-  breakdown:
-  items:
-  $ref: '#/components/schemas/TaxBreakdownItem'
-  type: array
-  required:
-
-* amount
-  type: object
-  TechnicalStop:
-  properties:
-  airport:
-  $ref: '#/components/schemas/FlightAirport'
-  arrival\_at:
-  $ref: '#/components/schemas/ZonedTime'
-  city:
-  $ref: '#/components/schemas/FlightCity'
-  departure\_at:
-  $ref: '#/components/schemas/ZonedTime'
-  required:
-
-* airport
-
-* city
-
-* arrival\_at
-
-* departure\_at
-  type: object
-  TicketContext:
-  enum:
-
-* not\_confirmed\_itinerary
-
-* not\_all\_tickets\_eligible
-
-* not\_permitted\_after\_ttl
-
-* booking\_record\_has\_problems
-  type: string
-  TicketV2:
-  properties:
-  id:
-  $ref: '#/components/schemas/UUID'
-  invalid\_flight\_coupons:
-  items:
-  $ref: '#/components/schemas/UnusableFlightCoupon'
-  type: array
-  is\_valid:
-  type: boolean
-  pax\_segments:
-  items:
-  $ref: '#/components/schemas/PaxSegmentV2'
-  minItems: 1
-  type: array
-  status:
-  $ref: '#/components/schemas/ProductStatus'
-  status\_updated\_at:
-  $ref: '#/components/schemas/UTCTime'
-  ticket\_number:
-  type: string
-  required:
-
-* id
-
-* status
-
-* status\_updated\_at
-
-* pax\_segments
-
-* invalid\_flight\_coupons
-
-* is\_valid
-  type: object
-  TicketingError:
-  oneOf:
-
-* $ref: '#/components/schemas/PriceChanged'
-  TicketingRequest:
-  properties:
-  agency\_fee:
-  multipleOf: 0.01
-  type: number
-  airline\_cc\_payment:
-  multipleOf: 0.01
-  type: number
-  credit\_card:
-  $ref: '#/components/schemas/CreditCard'
-  email:
-  type: string
-  expected\_agent\_net\_price:
-  multipleOf: 0.01
-  type: number
-  passengers:
-  items:
-  $ref: '#/components/schemas/Passenger\_Person'
-  minItems: 1
-  type: array
-  payment\_option:
-  $ref: '#/components/schemas/PaymentOption'
-  phone:
-  type: string
-  send\_itinerary:
-  type: boolean
-  required:
-
-* passengers
-
-* phone
-
-* payment\_option
-  type: object
-  TravelDocument:
-  properties:
-  expires\_at:
-  $ref: '#/components/schemas/Day'
-  issued\_by\_country:
-  type: string
-  number:
-  type: string
-  type:
-  $ref: '#/components/schemas/TravelDocumentType'
-  required:
-
-* type
-
-* number
-
-* expires\_at
-
-* issued\_by\_country
-  type: object
-  TravelDocumentType:
-  enum:
-
-* passport
-
-* identity
-  type: string
-  UTCTime:
-  example: '2016-07-22T00:00:00Z'
-  format: yyyy-mm-ddThh:MM:ssZ
-  type: string
-  UUID:
-  example: 00000000-0000-0000-0000-000000000000
-  format: uuid
-  type: string
-  UnusableFlightCoupon:
-  properties:
-  arrival\_airport:
-  type: string
-  departure\_airport:
-  type: string
-  departure\_time:
-  $ref: '#/components/schemas/ZonedTime'
-  status:
-  anyOf:
-
-  * $ref: '#/components/schemas/CouponStatus'
-
-  * type: string
-    description: Extensible enum
-    required:
-
-* status
-  type: object
-  UpdateOrderComment:
-  properties:
-  comment:
-  type: string
-  required:
-
-* comment
-  type: object
-  Vehicle:
-  properties:
-  code:
-  type: string
-  name:
-  type: string
-  required:
-
-* code
-  type: object
-  VoidContext:
-  enum:
-
-* not\_all\_tickets\_eligible
-
-* not\_permitted\_after\_departure
-
-* voiding\_grace\_period\_expired
-
-* penalty\_risk
-
-* booking\_record\_has\_problems
-  type: string
-  ZonedTime:
-  example: '2016-07-22T07:40:00+03:00'
-  format: date-time
-  type: string
+      enum:
+        - economy
+        - premium
+        - business
+        - first
+      type: string
+    CancelContext:
+      enum:
+        - not_all_tickets_eligible
+        - booking_record_has_problems
+      type: string
+    ChangeContext:
+      enum:
+        - source_not_supported
+        - no_issued_tickets
+        - tickets_expired
+        - nothing_to_change
+        - not_homogenous
+        - blocked_by_check_in_process
+        - blocked_by_fare_rules
+        - booking_record_has_problems
+      type: string
+    ChangeScope:
+      properties:
+        flights:
+          items:
+            $ref: '#/components/schemas/FlightChangeOptions'
+          type: array
+      required:
+        - flights
+      type: object
+    ChildPassenger_PassengerInfo:
+      properties:
+        child:
+          $ref: '#/components/schemas/PassengerInfo'
+      required:
+        - child
+      type: object
+    ChildPassenger_Person:
+      properties:
+        child:
+          $ref: '#/components/schemas/Person'
+      required:
+        - child
+      type: object
+    ConfirmPriceChangeRequest:
+      properties:
+        expected_agent_net_price:
+          multipleOf: 0.01
+          type: number
+      required:
+        - expected_agent_net_price
+      type: object
+    CouponStatus:
+      enum:
+        - open
+        - checked_in
+        - exchanged
+        - used
+        - refunded
+        - voided
+        - blocked
+      type: string
+    CreateOrderComment:
+      properties:
+        comment:
+          type: string
+        order_id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - order_id
+        - comment
+      type: object
+    CreditCard:
+      properties:
+        expiration_date:
+          type: string
+        holder_name:
+          type: string
+        number:
+          type: string
+        security:
+          type: string
+        zip_code:
+          type: string
+      required:
+        - number
+        - holder_name
+        - expiration_date
+      type: object
+    CreditCardType:
+      enum:
+        - visa
+        - mastercard
+        - american_express
+        - diners_club
+        - discover
+        - jcb
+        - unionpay
+      type: string
+    CurrencyCode:
+      enum:
+        - USD
+      example: USD
+      type: string
+    Day:
+      example: '2016-07-22'
+      format: date
+      type: string
+    Editor:
+      properties:
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/UTCTime'
+      required:
+        - first_name
+        - last_name
+        - email
+        - timestamp
+      type: object
+
+    ExchangedTicket:
+      properties:
+        exchanged_at:
+          $ref: '#/components/schemas/UTCTime'
+        id:
+          $ref: '#/components/schemas/UUID'
+        ticket_number:
+          type: string
+      required:
+        - id
+        - ticket_number
+        - exchanged_at
+      type: object
+    FareRules:
+      properties:
+        adult:
+          $ref: '#/components/schemas/PaxTypeRules'
+        child:
+          $ref: '#/components/schemas/PaxTypeRules'
+        fare_bases:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        infant:
+          $ref: '#/components/schemas/PaxTypeRules'
+      required:
+        - adult
+        - fare_bases
+      type: object
+    FareType:
+      enum:
+        - published
+        - nego
+        - web
+      type: string
+    FlightAirport:
+      properties:
+        iata:
+          type: string
+        name:
+          type: string
+      required:
+        - iata
+        - name
+      type: object
+    FlightCarrier:
+      properties:
+        iata:
+          type: string
+        name:
+          type: string
+        uuid:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - iata
+        - uuid
+        - name
+      type: object
+    FlightChangeOptions:
+      properties:
+        can_change_cabin:
+          type: boolean
+        can_change_departure_date:
+          type: boolean
+        can_change_departure_point:
+          type: boolean
+        can_change_destination_point:
+          type: boolean
+        index:
+          maximum: 9223372036854776000
+          minimum: -9223372036854776000
+          type: integer
+      required:
+        - index
+        - can_change_departure_point
+        - can_change_departure_date
+        - can_change_destination_point
+        - can_change_cabin
+      type: object
+    FlightCity:
+      properties:
+        country:
+          type: string
+        iata:
+          type: string
+        name:
+          type: string
+      required:
+        - iata
+        - name
+        - country
+      type: object
+    FlightCoupon:
+      properties:
+        code:
+          type: string
+        status:
+          anyOf:
+            - $ref: '#/components/schemas/CouponStatus'
+            - type: string
+          description: Extensible enum
+      required:
+        - status
+      type: object
+    FlightSearchRequestV2:
+      properties:
+        cabin:
+          $ref: '#/components/schemas/MultipleChoiceFilter_CabinClass'
+        carriers:
+          $ref: '#/components/schemas/MultipleChoiceFilter_IataCode'
+        exclude_basic_economy:
+          type: boolean
+        fare_types:
+          $ref: '#/components/schemas/MultipleChoiceFilter_FareType'
+        fast_search:
+          type: boolean
+        flights:
+          items:
+            $ref: '#/components/schemas/SearchSegment'
+          minItems: 1
+          type: array
+        include_details:
+          items:
+            $ref: '#/components/schemas/IncludeDetails'
+          type: array
+        passengers:
+          $ref: '#/components/schemas/SearchPassengers'
+        sources:
+          $ref: '#/components/schemas/MultipleChoiceFilter_SourceV2'
+      required:
+        - flights
+        - passengers
+      type: object
+    FlightSearchResponseV2:
+      properties:
+        flight_segments:
+          items:
+            $ref: '#/components/schemas/FlightSegmentV2'
+          type: array
+        offers:
+          items:
+            $ref: '#/components/schemas/OfferV2'
+          type: array
+        price_classes:
+          items:
+            $ref: '#/components/schemas/PriceClass'
+          type: array
+      required:
+        - offers
+        - flight_segments
+        - price_classes
+      type: object
+    FlightSegmentPoint:
+      properties:
+        city:
+          type: string
+        iata:
+          type: string
+        terminal:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/ZonedTime'
+      required:
+        - city
+        - iata
+        - timestamp
+      type: object
+    FlightSegmentStatus:
+      enum:
+        - confirmed
+        - awaiting_confirmation
+        - inactive
+      type: string
+    FlightSegmentV2:
+      properties:
+        arrival_point:
+          $ref: '#/components/schemas/FlightSegmentPoint'
+        booking_class:
+          example: '?'
+          maxLength: 1
+          minLength: 1
+          type: string
+        cabin:
+          $ref: '#/components/schemas/CabinClass'
+        confirmation_number:
+          type: string
+        departure_point:
+          $ref: '#/components/schemas/FlightSegmentPoint'
+        flight_code:
+          type: string
+        marketing_carrier:
+          $ref: '#/components/schemas/FlightCarrier'
+        operating_carrier:
+          $ref: '#/components/schemas/FlightCarrier'
+        technical_stops:
+          items:
+            $ref: '#/components/schemas/TechnicalStop'
+          type: array
+        vehicle:
+          $ref: '#/components/schemas/Vehicle'
+      required:
+        - departure_point
+        - arrival_point
+        - technical_stops
+        - booking_class
+        - cabin
+        - vehicle
+        - baggage
+        - flight_code
+        - marketing_carrier
+        - operating_carrier
+      type: object
+    FlightWithPriceClass_PriceClassIndex_FlightSegmentIndex:
+      properties:
+        fare_rules:
+          $ref: '#/components/schemas/FareRules'
+        price_class:
+          exclusiveMinimum: false
+          maximum: 9223372036854776000
+          minimum: 0
+          type: integer
+        segments:
+          items:
+            exclusiveMinimum: false
+            maximum: 9223372036854776000
+            minimum: 0
+            type: integer
+          minItems: 1
+          type: array
+      required:
+        - segments
+      type: object
+    FlightWithPriceClass_PriceClass_FlightSegmentV2:
+      properties:
+        fare_rules:
+          $ref: '#/components/schemas/FareRules'
+        price_class:
+          $ref: '#/components/schemas/PriceClass'
+        segments:
+          items:
+            $ref: '#/components/schemas/FlightSegmentV2'
+          minItems: 1
+          type: array
+      required:
+        - segments
+      type: object
+    FollowUpAction:
+      enum:
+        - involuntary_refund
+        - involuntary_exchange
+        - confirm_involuntary_changes
+        - contact_support
+      type: string
+    IdentityCardDocument:
+      properties:
+        expires_at:
+          $ref: '#/components/schemas/Day'
+        issuing_country:
+          type: string
+        number:
+          type: string
+      required:
+        - number
+        - expires_at
+        - issuing_country
+      type: object
+    IncludeDetails:
+      enum:
+        - taxes_per_pax
+      type: string
+    ModifyPaxContext:
+      enum:
+        - source_not_supported
+        - not_all_tickets_eligble
+        - unissued_order_modify_not_recommended
+      type: string
+    MultipleChoiceFilter_CabinClass:
+      oneOf:
+        - enum:
+            - any
+          title: Any
+          type: string
+        - items:
+            $ref: '#/components/schemas/CabinClass'
+          minItems: 1
+          title: OneOf
+          type: array
+    MultipleChoiceFilter_FareType:
+      oneOf:
+        - enum:
+            - any
+          title: Any
+          type: string
+        - items:
+            $ref: '#/components/schemas/FareType'
+          minItems: 1
+          title: OneOf
+          type: array
+    MultipleChoiceFilter_IataCode:
+      oneOf:
+        - enum:
+            - any
+          title: Any
+          type: string
+        - items:
+            type: string
+          minItems: 1
+          title: OneOf
+          type: array
+    MultipleChoiceFilter_SourceV2:
+      oneOf:
+        - enum:
+            - any
+          title: Any
+          type: string
+        - items:
+            $ref: '#/components/schemas/SourceV2'
+          minItems: 1
+          title: OneOf
+          type: array
+    OfferV2:
+      properties:
+        alliance:
+          type: string
+        basic_economy:
+          type: boolean
+        date_of_birth_required:
+          type: boolean
+        digest:
+          type: string
+        expires_at:
+          $ref: '#/components/schemas/UTCTime'
+        fare_rules:
+          $ref: '#/components/schemas/FareRules'
+        flights:
+          items:
+            $ref: '#/components/schemas/FlightWithPriceClass_PriceClassIndex_FlightSegmentIndex'
+          minItems: 1
+          type: array
+        price:
+          $ref: '#/components/schemas/PricingInfoV2'
+        travel_document_required:
+          type: boolean
+        validating_carrier:
+          $ref: '#/components/schemas/FlightCarrier'
+      required:
+        - flights
+        - basic_economy
+        - validating_carrier
+        - price
+        - digest
+        - travel_document_required
+        - date_of_birth_required
+      type: object
+    OrderComment:
+      properties:
+        author:
+          $ref: '#/components/schemas/Author'
+        comment:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        editors:
+          items:
+            $ref: '#/components/schemas/Editor'
+          type: array
+        id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - id
+        - comment
+        - author
+        - editors
+        - created_at
+      type: object
+    OrderV2:
+      properties:
+        agency_id:
+          $ref: '#/components/schemas/UUID'
+        agent_id:
+          $ref: '#/components/schemas/UUID'
+        booking_records:
+          items:
+            $ref: '#/components/schemas/BookingRecordV2'
+          minItems: 1
+          type: array
+        booking_source:
+          $ref: '#/components/schemas/BookingSource'
+        consortium_id:
+          $ref: '#/components/schemas/UUID'
+        contact_email:
+          type: string
+        contact_phone:
+          type: string
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        id:
+          $ref: '#/components/schemas/UUID'
+        is_external:
+          type: boolean
+        payments:
+          items:
+            $ref: '#/components/schemas/Payment'
+          type: array
+        queue_host_id:
+          type: string
+        readable_id:
+          type: integer
+        refund_invoices:
+          items:
+            $ref: '#/components/schemas/RefundInvoice'
+          type: array
+        sell_invoices:
+          items:
+            $ref: '#/components/schemas/SellInvoice'
+          type: array
+        temporary:
+          type: boolean
+        updated_at:
+          $ref: '#/components/schemas/UTCTime'
+        validating_carrier:
+          $ref: '#/components/schemas/FlightCarrier'
+      required:
+        - id
+        - agent_id
+        - agency_id
+        - readable_id
+        - is_external
+        - contact_phone
+        - contact_email
+        - booking_source
+        - validating_carrier
+        - booking_records
+        - created_at
+        - updated_at
+        - sell_invoices
+        - refund_invoices
+        - payments
+        - temporary
+      type: object
+    PassengerInfo:
+      properties:
+        air_ticket:
+          $ref: '#/components/schemas/TicketV2'
+        birthdate:
+          $ref: '#/components/schemas/Day'
+        bonus_card:
+          $ref: '#/components/schemas/BonusCard'
+        bonus_cards:
+          items:
+            $ref: '#/components/schemas/BonusCard'
+          type: array
+        exchanged_tickets:
+          items:
+            $ref: '#/components/schemas/ExchangedTicket'
+          type: array
+        id:
+          $ref: '#/components/schemas/UUID'
+        identity_cards:
+          items:
+            $ref: '#/components/schemas/IdentityCardDocument'
+          type: array
+        ktn:
+          type: string
+        middle_name:
+          type: string
+        name:
+          type: string
+        nationality:
+          type: string
+        passports:
+          items:
+            $ref: '#/components/schemas/PassportDocument'
+          type: array
+        sex:
+          $ref: '#/components/schemas/Sex'
+        surname:
+          type: string
+        travel_document:
+          $ref: '#/components/schemas/TravelDocument'
+      required:
+        - id
+        - name
+        - surname
+        - passports
+        - identity_cards
+        - bonus_cards
+        - sex
+        - nationality
+        - air_ticket
+        - exchanged_tickets
+      type: object
+    Passenger_PassengerInfo:
+      oneOf:
+        - $ref: '#/components/schemas/AdultPassenger_PassengerInfo'
+        - $ref: '#/components/schemas/ChildPassenger_PassengerInfo'
+    Passenger_Person:
+      oneOf:
+        - $ref: '#/components/schemas/AdultPassenger_Person'
+        - $ref: '#/components/schemas/ChildPassenger_Person'
+    PassportDocument:
+      properties:
+        expires_at:
+          $ref: '#/components/schemas/Day'
+        issuing_country:
+          type: string
+        number:
+          type: string
+      required:
+        - number
+        - expires_at
+        - issuing_country
+      type: object
+    PaxSegmentV2:
+      properties:
+        flight_coupon:
+          $ref: '#/components/schemas/FlightCoupon'
+        seats:
+          items:
+            $ref: '#/components/schemas/Seat'
+          type: array
+        status:
+          anyOf:
+            - $ref: '#/components/schemas/FlightSegmentStatus'
+            - type: string
+          description: Extensible enum
+      required:
+        - seats
+        - status
+      type: object
+    PaxTypeRules:
+      properties:
+        change:
+          $ref: '#/components/schemas/ActionRule'
+        refund:
+          $ref: '#/components/schemas/ActionRule'
+      type: object
+    Payment:
+      properties:
+        amount:
+          multipleOf: 0.01
+          type: number
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        id:
+          $ref: '#/components/schemas/UUID'
+        invoice_id:
+          $ref: '#/components/schemas/UUID'
+        pan_cc:
+          type: string
+        parent_payment_id:
+          $ref: '#/components/schemas/UUID'
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        status_updated_at:
+          $ref: '#/components/schemas/UTCTime'
+        type:
+          $ref: '#/components/schemas/PaymentType'
+      required:
+        - id
+        - invoice_id
+        - created_at
+        - type
+        - currency_code
+        - amount
+        - status
+        - status_updated_at
+      type: object
+    PaymentOption:
+      enum:
+        - passenger_cc
+        - agent_cash
+        - passenger_cc_single_payment
+        - custom
+      type: string
+    PaymentStatus:
+      enum:
+        - processing
+        - rejected
+        - authorized
+        - charged
+        - issued
+        - canceled
+      type: string
+    PaymentType:
+      enum:
+        - merchant_charge
+        - check_to_agency
+        - agency_charge
+        - check_from_agency
+        - merchant_refund
+        - refund_check_from_agency
+        - agency_refund
+        - refund_check_to_agency
+        - vendor_charge
+        - vendor_refund
+      type: string
+    PenaltyFee:
+      properties:
+        amount:
+          multipleOf: 0.001
+          type: number
+        currency:
+          type: string
+      required:
+        - currency
+        - amount
+      type: object
+    PerPaxPrice_MoneyUSD:
+      properties:
+        adult:
+          multipleOf: 0.01
+          type: number
+        child:
+          multipleOf: 0.01
+          type: number
+        infant:
+          multipleOf: 0.01
+          type: number
+      required:
+        - adult
+      type: object
+    PerPaxPrice_TaxWithBreakdown:
+      properties:
+        adult:
+          $ref: '#/components/schemas/TaxWithBreakdown'
+        child:
+          $ref: '#/components/schemas/TaxWithBreakdown'
+        infant:
+          $ref: '#/components/schemas/TaxWithBreakdown'
+      required:
+        - adult
+      type: object
+    Person:
+      properties:
+        birthday:
+          $ref: '#/components/schemas/Day'
+        bonus_card:
+          $ref: '#/components/schemas/BonusCard'
+        first_name:
+          type: string
+        last_name:
+          type: string
+        middle_name:
+          type: string
+        nationality:
+          type: string
+        sex:
+          $ref: '#/components/schemas/Sex'
+        travel_document:
+          $ref: '#/components/schemas/TravelDocument'
+      required:
+        - first_name
+        - last_name
+        - nationality
+        - birthday
+        - sex
+      type: object
+    PreliminaryRequest:
+      properties:
+        agency_fee:
+          multipleOf: 0.01
+          type: number
+        airline_cc_payment:
+          multipleOf: 0.01
+          type: number
+        digest:
+          type: string
+        run_upsell:
+          type: boolean
+      required:
+        - digest
+        - run_upsell
+      type: object
+    PreliminaryResponseV2:
+      properties:
+        fare_rule_texts:
+          additionalProperties:
+            type: string
+          type: object
+        flight_segments:
+          items:
+            $ref: '#/components/schemas/FlightSegmentV2'
+          type: array
+        offers:
+          items:
+            $ref: '#/components/schemas/OfferV2'
+          minItems: 1
+          type: array
+        price_classes:
+          items:
+            $ref: '#/components/schemas/PriceClass'
+          type: array
+      required:
+        - offers
+        - flight_segments
+        - fare_rule_texts
+        - price_classes
+      type: object
+    PriceChanged:
+      properties:
+        message:
+          type: string
+        order_id:
+          $ref: '#/components/schemas/UUID'
+        pricing:
+          $ref: '#/components/schemas/PricingInfoV2'
+        reason:
+          enum:
+            - price_changed
+          type: string
+      required:
+        - message
+        - pricing
+        - order_id
+        - reason
+      type: object
+    PriceClass:
+      properties:
+        code:
+          type: string
+        descriptions:
+          items:
+            type: string
+          type: array
+        name:
+          type: string
+      required:
+        - name
+        - descriptions
+      type: object
+    PricingCC:
+      properties:
+        agency_cash_payment:
+          multipleOf: 0.01
+          type: number
+        agent_net_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        agent_net_total:
+          multipleOf: 0.01
+          type: number
+        agent_service_fee:
+          multipleOf: 0.01
+          type: number
+        airline_agent_markup:
+          multipleOf: 0.01
+          type: number
+        airline_cc_payment:
+          multipleOf: 0.01
+          type: number
+        allowed_cc_types:
+          items:
+            $ref: '#/components/schemas/CreditCardType'
+          type: array
+        cc_transaction_fee:
+          multipleOf: 0.01
+          type: number
+        merchant_cc_payment:
+          multipleOf: 0.01
+          type: number
+        passenger_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        passenger_total:
+          multipleOf: 0.01
+          type: number
+      required:
+        - allowed_cc_types
+        - agent_net_total
+        - agent_net_per_pax
+        - airline_cc_payment
+        - merchant_cc_payment
+        - agency_cash_payment
+        - passenger_total
+        - passenger_per_pax
+        - airline_agent_markup
+        - agent_service_fee
+        - cc_transaction_fee
+      type: object
+    PricingCash:
+      properties:
+        agency_cash_payment:
+          multipleOf: 0.01
+          type: number
+        agent_net_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        agent_net_total:
+          multipleOf: 0.01
+          type: number
+        agent_service_fee:
+          multipleOf: 0.01
+          type: number
+        passenger_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        passenger_total:
+          multipleOf: 0.01
+          type: number
+      required:
+        - agent_net_total
+        - agent_net_per_pax
+        - agency_cash_payment
+        - passenger_total
+        - passenger_per_pax
+        - agent_service_fee
+      type: object
+    PricingCustom:
+      properties:
+        agency_cash_payment:
+          multipleOf: 0.01
+          type: number
+        agent_net_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        agent_net_total:
+          multipleOf: 0.01
+          type: number
+        agent_service_fee:
+          multipleOf: 0.01
+          type: number
+        passenger_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        passenger_total:
+          multipleOf: 0.01
+          type: number
+      required:
+        - agent_net_total
+        - agent_net_per_pax
+        - agency_cash_payment
+        - passenger_total
+        - passenger_per_pax
+        - agent_service_fee
+      type: object
+    PricingInfoV2:
+      properties:
+        advanced_pricing_details:
+          $ref: '#/components/schemas/AdvancedPricingDetails'
+        agent_commission:
+          multipleOf: 0.01
+          type: number
+        agent_extra_fee:
+          multipleOf: 0.01
+          type: number
+        agent_preset_fee:
+          multipleOf: 0.01
+          type: number
+        airline_base_fare:
+          multipleOf: 0.01
+          type: number
+        airline_base_fare_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_MoneyUSD'
+        airline_taxes:
+          multipleOf: 0.01
+          type: number
+        airline_taxes_per_pax:
+          $ref: '#/components/schemas/PerPaxPrice_TaxWithBreakdown'
+        airline_total:
+          multipleOf: 0.01
+          type: number
+        consolidator_discount:
+          multipleOf: 0.01
+          type: number
+        consolidator_fee:
+          multipleOf: 0.01
+          type: number
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        penalty:
+          multipleOf: 0.01
+          type: number
+        pricing_options:
+          $ref: '#/components/schemas/PricingOptions'
+      required:
+        - currency_code
+        - airline_base_fare
+        - airline_base_fare_per_pax
+        - airline_taxes
+        - airline_total
+        - consolidator_fee
+        - consolidator_discount
+        - agent_commission
+        - agent_preset_fee
+        - agent_extra_fee
+        - pricing_options
+        - advanced_pricing_details
+      type: object
+    PricingOptions:
+      properties:
+        agent_cash:
+          $ref: '#/components/schemas/PricingCash'
+        custom:
+          $ref: '#/components/schemas/PricingCustom'
+        passenger_cc:
+          $ref: '#/components/schemas/PricingCC'
+        passenger_cc_single_payment:
+          $ref: '#/components/schemas/PricingCC'
+      type: object
+    ProductStatus:
+      enum:
+        - booked
+        - processing_cancel
+        - failed_cancel
+        - canceled
+        - processing_issue
+        - failed_issue
+        - terminated_issue
+        - issued
+        - processing_void
+        - failed_void
+        - voided
+        - processing_exchange
+        - exchanged
+        - refunded
+        - failed_exchange
+        - terminated_refund
+        - processing_refund
+        - failed_refund
+      type: string
+    RefundComponents:
+      properties:
+        tickets:
+          items:
+            $ref: '#/components/schemas/RefundItem'
+          type: array
+      required:
+        - tickets
+      type: object
+    RefundContext:
+      enum:
+        - source_not_supported
+        - not_all_tickets_eligible
+        - not_homogeneous
+        - inappropriate_coupons_statuses
+        - tickets_expired
+        - blocked_by_fare_rules
+        - booking_record_has_problems
+      type: string
+    RefundError:
+      oneOf:
+        - $ref: '#/components/schemas/RefundTimeLimit'
+        - $ref: '#/components/schemas/RefundNDCError'
+    RefundInput:
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      type: object
+    RefundInvoice:
+      properties:
+        components:
+          $ref: '#/components/schemas/RefundComponents'
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        id:
+          $ref: '#/components/schemas/UUID'
+      required:
+        - id
+        - created_at
+        - currency_code
+        - components
+      type: object
+    RefundItem:
+      properties:
+        agent_extra_fee_to_refund:
+          multipleOf: 0.01
+          type: number
+        agent_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        airline_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        fare_to_refund:
+          multipleOf: 0.01
+          type: number
+        id:
+          $ref: '#/components/schemas/UUID'
+        passenger_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        payment_fee_to_refund:
+          multipleOf: 0.01
+          type: number
+        penalty:
+          multipleOf: 0.01
+          type: number
+        recall_agent_commission:
+          multipleOf: 0.01
+          type: number
+        recall_agent_extra_fee:
+          multipleOf: 0.01
+          type: number
+        recall_consolidator_discount:
+          multipleOf: 0.01
+          type: number
+        taxes_to_refund:
+          multipleOf: 0.01
+          type: number
+      required:
+        - id
+        - fare_to_refund
+        - taxes_to_refund
+        - penalty
+        - recall_consolidator_discount
+        - recall_agent_commission
+        - recall_agent_extra_fee
+        - agent_extra_fee_to_refund
+        - payment_fee_to_refund
+        - airline_total_to_refund
+        - agent_total_to_refund
+        - passenger_total_to_refund
+      type: object
+    RefundNDCError:
+      properties:
+        message:
+          type: string
+        reason:
+          enum:
+            - ndc_error
+          type: string
+        ui_error:
+          type: string
+      required:
+        - message
+        - reason
+        - ui_error
+      type: object
+    RefundOffer:
+      properties:
+        id:
+          type: string
+        pricing:
+          $ref: '#/components/schemas/RefundPricing'
+        time_limit:
+          $ref: '#/components/schemas/UTCTime'
+      required:
+        - id
+        - pricing
+      type: object
+    RefundOfferError:
+      properties:
+        message:
+          type: string
+        reason:
+          enum:
+            - should_void
+          type: string
+      required:
+        - reason
+        - message
+      type: object
+    RefundPricing:
+      properties:
+        agent_extra_fee_to_refund:
+          multipleOf: 0.01
+          type: number
+        agent_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        airline_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        fare_to_refund:
+          multipleOf: 0.01
+          type: number
+        passenger_total_to_refund:
+          multipleOf: 0.01
+          type: number
+        payment_fee_to_refund:
+          multipleOf: 0.01
+          type: number
+        penalty:
+          multipleOf: 0.01
+          type: number
+        recall_agent_commission:
+          multipleOf: 0.01
+          type: number
+        recall_agent_extra_fee:
+          multipleOf: 0.01
+          type: number
+        recall_consolidator_discount:
+          multipleOf: 0.01
+          type: number
+        taxes_to_refund:
+          multipleOf: 0.01
+          type: number
+      required:
+        - fare_to_refund
+        - taxes_to_refund
+        - penalty
+        - recall_consolidator_discount
+        - recall_agent_commission
+        - recall_agent_extra_fee
+        - agent_extra_fee_to_refund
+        - payment_fee_to_refund
+        - airline_total_to_refund
+        - agent_total_to_refund
+        - passenger_total_to_refund
+      type: object
+    RefundStatus:
+      properties:
+        offer:
+          $ref: '#/components/schemas/RefundOffer'
+      required:
+        - offer
+      type: object
+    RefundTimeLimit:
+      properties:
+        message:
+          type: string
+        reason:
+          enum:
+            - time_limit_over
+          type: string
+      required:
+        - message
+        - reason
+      type: object
+    SearchPassengers:
+      description: 'Additional restrictions: total number of passengers not greater 8, number of infants not greater number of adults'
+      properties:
+        adults:
+          exclusiveMaximum: false
+          exclusiveMinimum: false
+          maximum: 8
+          minimum: 1
+          type: integer
+        children:
+          exclusiveMaximum: false
+          exclusiveMinimum: false
+          maximum: 7
+          minimum: 0
+          type: integer
+        infants:
+          exclusiveMaximum: false
+          exclusiveMinimum: false
+          maximum: 4
+          minimum: 0
+          type: integer
+      required:
+        - adults
+        - children
+        - infants
+      type: object
+    SearchSegment:
+      properties:
+        date:
+          $ref: '#/components/schemas/Day'
+        from:
+          type: string
+        to:
+          type: string
+      required:
+        - from
+        - to
+        - date
+      type: object
+    Seat:
+      properties:
+        column:
+          type: string
+        emd_number:
+          type: string
+        id:
+          $ref: '#/components/schemas/UUID'
+        row:
+          maximum: 9223372036854776000
+          minimum: -9223372036854776000
+          type: integer
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+        status_updated_at:
+          $ref: '#/components/schemas/UTCTime'
+      required:
+        - id
+        - status
+        - status_updated_at
+        - row
+        - column
+      type: object
+    SellComponent:
+      properties:
+        agent_extra_fee:
+          multipleOf: 0.01
+          type: number
+        fare_type:
+          $ref: '#/components/schemas/FareType'
+        items:
+          items:
+            $ref: '#/components/schemas/SellItem'
+          minItems: 1
+          type: array
+      required:
+        - agent_extra_fee
+        - items
+      type: object
+    SellComponents:
+      anyOf:
+        - properties:
+            tickets:
+              minItems: 1
+              type: array
+        - properties:
+            seats:
+              minItems: 1
+              type: array
+      properties:
+        seats:
+          items:
+            $ref: '#/components/schemas/SellComponent'
+          type: array
+        tickets:
+          items:
+            $ref: '#/components/schemas/SellComponent'
+          type: array
+      required:
+        - tickets
+        - seats
+      type: object
+    SellInvoice:
+      properties:
+        components:
+          $ref: '#/components/schemas/SellComponents'
+        created_at:
+          $ref: '#/components/schemas/UTCTime'
+        currency_code:
+          $ref: '#/components/schemas/CurrencyCode'
+        id:
+          $ref: '#/components/schemas/UUID'
+        merchant_cc_payment_fee:
+          multipleOf: 0.01
+          type: number
+        pricing_option:
+          $ref: '#/components/schemas/PaymentOption'
+      required:
+        - id
+        - created_at
+        - pricing_option
+        - currency_code
+        - merchant_cc_payment_fee
+        - components
+      type: object
+    SellItem:
+      properties:
+        agent_commission:
+          multipleOf: 0.01
+          type: number
+        agent_net_total:
+          multipleOf: 0.01
+          type: number
+        airline_base_fare:
+          multipleOf: 0.01
+          type: number
+        airline_taxes:
+          multipleOf: 0.01
+          type: number
+        airline_total:
+          multipleOf: 0.01
+          type: number
+        consolidator_discount:
+          multipleOf: 0.01
+          type: number
+        consolidator_fee:
+          multipleOf: 0.01
+          type: number
+        id:
+          $ref: '#/components/schemas/UUID'
+        passenger_total:
+          multipleOf: 0.01
+          type: number
+        penalty:
+          multipleOf: 0.01
+          type: number
+      required:
+        - id
+        - airline_base_fare
+        - airline_taxes
+        - consolidator_fee
+        - consolidator_discount
+        - agent_commission
+        - agent_net_total
+        - passenger_total
+        - airline_total
+      type: object
+    Sex:
+      enum:
+        - male
+        - female
+      type: string
+    SituationRule:
+      properties:
+        is_permitted:
+          type: boolean
+        max_penalty:
+          $ref: '#/components/schemas/PenaltyFee'
+        min_penalty:
+          $ref: '#/components/schemas/PenaltyFee'
+      required:
+        - is_permitted
+      type: object
+    SourceV2:
+      enum:
+        - amadeus
+        - ndc_direct
+        - ndc_partner
+      type: string
+    TaxBreakdownItem:
+      properties:
+        amount:
+          multipleOf: 0.01
+          type: number
+        code:
+          type: string
+        description:
+          type: string
+      required:
+        - code
+        - amount
+      type: object
+    TaxWithBreakdown:
+      properties:
+        amount:
+          multipleOf: 0.01
+          type: number
+        breakdown:
+          items:
+            $ref: '#/components/schemas/TaxBreakdownItem'
+          type: array
+      required:
+        - amount
+      type: object
+    TechnicalStop:
+      properties:
+        airport:
+          $ref: '#/components/schemas/FlightAirport'
+        arrival_at:
+          $ref: '#/components/schemas/ZonedTime'
+        city:
+          $ref: '#/components/schemas/FlightCity'
+        departure_at:
+          $ref: '#/components/schemas/ZonedTime'
+      required:
+        - airport
+        - city
+        - arrival_at
+        - departure_at
+      type: object
+    TicketContext:
+      enum:
+        - not_confirmed_itinerary
+        - not_all_tickets_eligible
+        - not_permitted_after_ttl
+        - booking_record_has_problems
+      type: string
+    TicketV2:
+      properties:
+        id:
+          $ref: '#/components/schemas/UUID'
+        invalid_flight_coupons:
+          items:
+            $ref: '#/components/schemas/UnusableFlightCoupon'
+          type: array
+        is_valid:
+          type: boolean
+        pax_segments:
+          items:
+            $ref: '#/components/schemas/PaxSegmentV2'
+          minItems: 1
+          type: array
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+        status_updated_at:
+          $ref: '#/components/schemas/UTCTime'
+        ticket_number:
+          type: string
+      required:
+        - id
+        - status
+        - status_updated_at
+        - pax_segments
+        - invalid_flight_coupons
+        - is_valid
+      type: object
+    TicketingError:
+      oneOf:
+        - $ref: '#/components/schemas/PriceChanged'
+    TicketingRequest:
+      properties:
+        agency_fee:
+          multipleOf: 0.01
+          type: number
+        airline_cc_payment:
+          multipleOf: 0.01
+          type: number
+        credit_card:
+          $ref: '#/components/schemas/CreditCard'
+        email:
+          type: string
+        expected_agent_net_price:
+          multipleOf: 0.01
+          type: number
+        passengers:
+          items:
+            $ref: '#/components/schemas/Passenger_Person'
+          minItems: 1
+          type: array
+        payment_option:
+          $ref: '#/components/schemas/PaymentOption'
+        phone:
+          type: string
+        send_itinerary:
+          type: boolean
+      required:
+        - passengers
+        - phone
+        - payment_option
+      type: object
+    TravelDocument:
+      properties:
+        expires_at:
+          $ref: '#/components/schemas/Day'
+        issued_by_country:
+          type: string
+        number:
+          type: string
+        type:
+          $ref: '#/components/schemas/TravelDocumentType'
+      required:
+        - type
+        - number
+        - expires_at
+        - issued_by_country
+      type: object
+    TravelDocumentType:
+      enum:
+        - passport
+        - identity
+      type: string
+    UTCTime:
+      example: '2016-07-22T00:00:00Z'
+      format: yyyy-mm-ddThh:MM:ssZ
+      type: string
+    UUID:
+      example: 00000000-0000-0000-0000-000000000000
+      format: uuid
+      type: string
+    UnusableFlightCoupon:
+      properties:
+        arrival_airport:
+          type: string
+        departure_airport:
+          type: string
+        departure_time:
+          $ref: '#/components/schemas/ZonedTime'
+        status:
+          anyOf:
+            - $ref: '#/components/schemas/CouponStatus'
+            - type: string
+          description: Extensible enum
+      required:
+        - status
+      type: object
+    UpdateOrderComment:
+      properties:
+        comment:
+          type: string
+      required:
+        - comment
+      type: object
+    Vehicle:
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+      required:
+        - code
+      type: object
+    VoidContext:
+      enum:
+        - not_all_tickets_eligible
+        - not_permitted_after_departure
+        - voiding_grace_period_expired
+        - penalty_risk
+        - booking_record_has_problems
+      type: string
+    ZonedTime:
+      example: '2016-07-22T07:40:00+03:00'
+      format: date-time
+      type: string
   securitySchemes:
-  air-public-oauth:
-  description: Bearer token
-  scheme: bearer
-  type: http
-  info:
+    air-public-oauth:
+      description: Bearer token
+      scheme: bearer
+      type: http
+info:
   title: ''
   version: ''
-  openapi: 3.0.0
-  paths:
-  /api/public/v2/booking\_records/{booking_record_id}/cancel:
-  post:
-  description: Cancel a booking record that has not been issued
-  parameters:
-
-* in: path
-  name: booking\_record\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingRecordV2'
-  description: ''
-  '404':
-  description: '`booking_record_id` not found'
-  security:
-
-* air-public-oauth: \[]
-  /api/public/v2/booking\_records/{booking_record_id}/create\_refund\_offer:
-  post:
-  description: Generate a refund offer for the requested passengers
-  parameters:
-
-* in: path
-  name: booking\_record\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/RefundStatus'
-  description: ''
-  '400':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/RefundOfferError'
-  description: ''
-  '404':
-  description: '`booking_record_id` not found'
-  security:
-
-* air-public-oauth: \[]
-  /api/public/v2/booking\_records/{booking_record_id}/issue:
-  post:
-  description: Issue tickets for a booking record
-  parameters:
-
-* in: path
-  name: booking\_record\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/TicketingRequest'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingRecordV2'
-  description: ''
-  '400':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/TicketingError'
-  description: ' or `body`'
-  '404':
-  description: '`booking_record_id` not found'
-  security:
-
-* air-public-oauth: \[]
-  /api/public/v2/booking\_records/{booking_record_id}/refund:
-  post:
-  description: Accept a refund offer
-  parameters:
-
-* in: path
-  name: booking\_record\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/RefundInput'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingRecordV2'
-  description: ''
-  '400':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/RefundError'
-  description: ' or `body`'
-  '404':
-  description: '`booking_record_id` not found'
-  security:
-
-* air-public-oauth: \[]
-  /api/public/v2/booking\_records/{booking_record_id}/void:
-  post:
-  description: Void tickets in a booking record and/or cancel the booking record
-  parameters:
-
-* in: path
-  name: booking\_record\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingRecordV2'
-  description: ''
-  '404':
-  description: '`booking_record_id` not found'
-  security:
-
-* air-public-oauth: \[]
+openapi: 3.0.0
+paths:
+  /api/public/v2/booking_records/{booking_record_id}/cancel:
+    post:
+      description: Cancel a booking record that has not been issued
+      parameters:
+        - in: path
+          name: booking_record_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingRecordV2'
+          description: ''
+        '404':
+          description: '`booking_record_id` not found'
+      security:
+        - air-public-oauth: []
+  /api/public/v2/booking_records/{booking_record_id}/create_refund_offer:
+    post:
+      description: Generate a refund offer for the requested passengers
+      parameters:
+        - in: path
+          name: booking_record_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/RefundStatus'
+          description: ''
+        '400':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/RefundOfferError'
+          description: ''
+        '404':
+          description: '`booking_record_id` not found'
+      security:
+        - air-public-oauth: []
+  /api/public/v2/booking_records/{booking_record_id}/issue:
+    post:
+      description: Issue tickets for a booking record
+      parameters:
+        - in: path
+          name: booking_record_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/TicketingRequest'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingRecordV2'
+          description: ''
+        '400':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/TicketingError'
+          description: ' or `body`'
+        '404':
+          description: '`booking_record_id` not found'
+      security:
+        - air-public-oauth: []
+  /api/public/v2/booking_records/{booking_record_id}/refund:
+    post:
+      description: Accept a refund offer
+      parameters:
+        - in: path
+          name: booking_record_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/RefundInput'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingRecordV2'
+          description: ''
+        '400':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/RefundError'
+          description: ' or `body`'
+        '404':
+          description: '`booking_record_id` not found'
+      security:
+        - air-public-oauth: []
+  /api/public/v2/booking_records/{booking_record_id}/void:
+    post:
+      description: Void tickets in a booking record and/or cancel the booking record
+      parameters:
+        - in: path
+          name: booking_record_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingRecordV2'
+          description: ''
+        '404':
+          description: '`booking_record_id` not found'
+      security:
+        - air-public-oauth: []
   /api/public/v2/orders/booking:
-  post:
-  description: Create an order based on the digest from preliminary
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingRequest'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/OrderV2'
-  description: ''
-  '400':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingError'
-  description: ' or `body`'
-  security:
-
-* air-public-oauth: \[]
+    post:
+      description: Create an order based on the digest from preliminary
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/BookingRequest'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderV2'
+          description: ''
+        '400':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingError'
+          description: ' or `body`'
+      security:
+        - air-public-oauth: []
   /api/public/v2/orders/comments:
-  delete:
-  description: Delete an order comment with an order
-  parameters:
-
-* in: query
-  name: id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '204':
-  description: ''
-  '400':
-  description: Invalid `id`
-  security:
-
-* air-public-oauth: \[]
-  get:
-  description: Search order comments
-  parameters:
-
-* in: query
-  name: order
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  items:
-  $ref: '#/components/schemas/OrderComment'
-  type: array
-  description: ''
-  '400':
-  description: Invalid `order`
-  security:
-
-* air-public-oauth: \[]
-  post:
-  description: Create a comment associated with an order
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/CreateOrderComment'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/OrderComment'
-  description: ''
-  '400':
-  description: Invalid `body`
-  security:
-
-* air-public-oauth: \[]
-  put:
-  description: Update an order comment
-  parameters:
-
-* in: query
-  name: id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/UpdateOrderComment'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/OrderComment'
-  description: ''
-  '400':
-  description: Invalid `body` or `id`
-  security:
-
-* air-public-oauth: \[]
-  /api/public/v2/orders/confirm\_price\_change/{tmp_order_id}:
-  post:
-  description: Confirm booking after price change
-  parameters:
-
-* in: path
-  name: tmp\_order\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/ConfirmPriceChangeRequest'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/OrderV2'
-  description: ''
-  '400':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/BookingError'
-  description: ' or `body`'
-  '404':
-  description: '`tmp_order_id` not found'
-  security:
-
-* air-public-oauth: \[]
+    delete:
+      description: Delete an order comment with an order
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: Invalid `id`
+      security:
+        - air-public-oauth: []
+    get:
+      description: Search order comments
+      parameters:
+        - in: query
+          name: order
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                items:
+                  $ref: '#/components/schemas/OrderComment'
+                type: array
+          description: ''
+        '400':
+          description: Invalid `order`
+      security:
+        - air-public-oauth: []
+    post:
+      description: Create a comment associated with an order
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/CreateOrderComment'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderComment'
+          description: ''
+        '400':
+          description: Invalid `body`
+      security:
+        - air-public-oauth: []
+    put:
+      description: Update an order comment
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderComment'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderComment'
+          description: ''
+        '400':
+          description: Invalid `body` or `id`
+      security:
+        - air-public-oauth: []
+  /api/public/v2/orders/confirm_price_change/{tmp_order_id}:
+    post:
+      description: Confirm booking after price change
+      parameters:
+        - in: path
+          name: tmp_order_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ConfirmPriceChangeRequest'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderV2'
+          description: ''
+        '400':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/BookingError'
+          description: ' or `body`'
+        '404':
+          description: '`tmp_order_id` not found'
+      security:
+        - air-public-oauth: []
   /api/public/v2/orders/preliminary:
-  post:
-  description: Renew pricing for a digest from search and perform upsell
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/PreliminaryRequest'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/PreliminaryResponseV2'
-  description: ''
-  security:
-
-* air-public-oauth: \[]
+    post:
+      description: Renew pricing for a digest from search and perform upsell
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/PreliminaryRequest'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/PreliminaryResponseV2'
+          description: ''
+      security:
+        - air-public-oauth: []
   /api/public/v2/orders/{order_id}:
-  get:
-  description: Get order by its ID
-  parameters:
-
-* in: path
-  name: order\_id
-  required: true
-  schema:
-  format: uuid
-  type: string
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/OrderV2'
-  description: ''
-  '404':
-  description: '`order_id` not found'
-  security:
-
-* air-public-oauth: \[]
+    get:
+      description: Get order by its ID
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/OrderV2'
+          description: ''
+        '404':
+          description: '`order_id` not found'
+      security:
+        - air-public-oauth: []
   /api/public/v2/search:
-  post:
-  description: Perform a search for flight offers
-  parameters:
-
-* in: header
-  name: x-verbose-logging
-  required: false
-  schema:
-  type: boolean
-  requestBody:
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/FlightSearchRequestV2'
-  responses:
-  '200':
-  content:
-  application/json;charset=utf-8:
-  schema:
-  $ref: '#/components/schemas/FlightSearchResponseV2'
-  description: ''
-  '400':
-  description: Invalid `body` or `x-verbose-logging`
-  security:
-
-* air-public-oauth: \[]
+    post:
+      description: Perform a search for flight offers
+      parameters:
+        - in: header
+          name: x-verbose-logging
+          required: false
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json;charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/FlightSearchRequestV2'
+      responses:
+        '200':
+          content:
+            application/json;charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/FlightSearchResponseV2'
+          description: ''
+        '400':
+          description: Invalid `body` or `x-verbose-logging`
+      security:
+        - air-public-oauth: []
