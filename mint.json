@@ -55,7 +55,9 @@
         "introduction",
         "quickstart",
         "development",
-        "Essentials"
+        "Essentials",
+        "essentials/markdown",
+        "essentials/code"
       ]
     },
     {
