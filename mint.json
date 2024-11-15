@@ -55,9 +55,7 @@
         "introduction",
         "quickstart",
         "development",
-        "Essentials",
-        "essentials/markdown",
-        "essentials/code"
+        "folder/sub"      
       ]
     },
     {
